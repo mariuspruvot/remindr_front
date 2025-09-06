@@ -6,6 +6,7 @@
 'use server';
 
 import type { FormData } from '@/lib/types';
+import { convertLocalToUTC } from '@/lib/utils/date';
 
 interface ActionResult {
   success: boolean;
@@ -44,7 +45,7 @@ export async function createReminderAction(
       reminder_text: data.message,
       target_url: data.link || undefined,
       contact: data.contact,
-      scheduled_at: data.datetime,
+      scheduled_at: convertLocalToUTC(data.datetime),
     };
 
     // Make API call from server

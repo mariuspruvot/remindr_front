@@ -55,3 +55,12 @@ export function isFutureDate(dateString: string): boolean {
 export function getCurrentDateTimeLocal(): string {
   return formatDateTimeLocal(new Date());
 }
+
+/**
+ * Convert datetime-local string to UTC ISO string
+ * @param datetimeLocal - datetime-local string (YYYY-MM-DDTHH:MM)
+ * @returns UTC ISO string
+ */
+export function convertLocalToUTC(datetimeLocal: string): string {
+  return new Date(datetimeLocal).toISOString();
+}
