@@ -51,7 +51,7 @@ export async function createReminderAction(
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
     const apiToken = process.env.NEXT_PUBLIC_API_TOKEN || 'toto';
 
-    const response = await fetch(`${apiUrl}/api/reminders/`, {
+    const response = await fetch(`${apiUrl}/reminders/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
