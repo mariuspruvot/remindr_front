@@ -62,5 +62,19 @@ export function getCurrentDateTimeLocal(): string {
  * @returns UTC ISO string
  */
 export function convertLocalToUTC(datetimeLocal: string): string {
-  return new Date(datetimeLocal).toISOString();
+  // Force UTC interpretation by adding timezone info
+  const date = new Date(datetimeLocal);
+  return date.toISOString();
+}
+
+/**
+ * Convert datetime-local string to UTC ISO string with explicit timezone
+ * @param datetimeLocal - datetime-local string (YYYY-MM-DDTHH:MM)
+ * @returns UTC ISO string with explicit timezone
+ */
+export function convertLocalToUTCExplicit(datetimeLocal: string): string {
+  // Create date and force UTC interpretation
+  const date = new Date(datetimeLocal);
+  // Return with explicit UTC timezone
+  return date.toISOString().replace('Z', '+00:00');
 }

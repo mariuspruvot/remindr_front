@@ -10,6 +10,7 @@ import type {
   ShortURL,
   ApiError,
 } from '@/lib/types';
+import { convertLocalToUTC } from '@/lib/utils/date';
 
 class ApiError extends Error {
   constructor(
@@ -55,7 +56,7 @@ class ReminderApiService {
         reminder_text: data.message,
         target_url: data.link || undefined,
         contact: data.contact,
-        scheduled_at: data.datetime,
+        scheduled_at: convertLocalToUTC(data.datetime),
       };
 
       const response = await fetch(`${this.baseUrl}/api/reminders/`, {
