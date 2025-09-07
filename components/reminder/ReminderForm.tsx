@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { ClipboardIcon } from 'lucide-react';
+import { DateShortcutsClient } from '@/components/ui/date-shortcuts-client';
 import { useReminderForm } from '@/hooks/use-reminder-form';
 import type { FormData } from '@/lib/types';
 
@@ -26,10 +27,14 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
     formData,
     errors,
     updateField,
-    setDateShortcut,
     pasteFromClipboard,
     validateForm,
   } = useReminderForm();
+
+  // Handle date selection from shortcuts (client-side)
+  const handleDateSelect = (dateString: string) => {
+    updateField('datetime', dateString);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,35 +133,7 @@ export const ReminderForm: React.FC<ReminderFormProps> = ({
             className='bg-input border-border focus:ring-ring'
             required
           />
-          <div className='flex flex-row gap-2 mt-4 justify-center'>
-            <Button
-              type='button'
-              onClick={() => setDateShortcut('tomorrow')}
-              variant='outline'
-              size='sm'
-              className='text-xs border-border text-card-foreground hover:bg-muted bg-transparent flex-1'
-            >
-              Tomorrow
-            </Button>
-            <Button
-              type='button'
-              onClick={() => setDateShortcut('week')}
-              variant='outline'
-              size='sm'
-              className='text-xs border-border text-card-foreground hover:bg-muted bg-transparent flex-1'
-            >
-              Next week
-            </Button>
-            <Button
-              type='button'
-              onClick={() => setDateShortcut('month')}
-              variant='outline'
-              size='sm'
-              className='text-xs border-border text-card-foreground hover:bg-muted bg-transparent flex-1'
-            >
-              Next month
-            </Button>
-          </div>
+          <DateShortcutsClient onDateSelect={handleDateSelect} />
         </div>
 
         {/* Submit Button */}

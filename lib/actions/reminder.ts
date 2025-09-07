@@ -29,6 +29,7 @@ export async function createReminderAction(
       link: formData.get('link') as string,
       contact: formData.get('contact') as string,
       datetime: formData.get('datetime') as string,
+      timezone: formData.get('timezone') as string,
     };
 
     // Validate form data
@@ -40,13 +41,34 @@ export async function createReminderAction(
       };
     }
 
-    // Prepare API data
+    // Convert naive datetime + client timezone to UTC for backend
+    console.log('📅 Processing datetime:', {
+      naiveDatetime: data.datetime,
+      clientTimezone: data.timezone
+    });
+
+    const scheduledAtUTC = convertLocalToUTC(data.datetime, data.timezone);
+
+    if (!scheduledAtUTC) {
+      return {
+        success: false,
+        message: 'Failed to process the reminder date and time. Please try again.',
+      };
+    }
+
+    // Prepare API data with timezone-aware conversion
     const apiData = {
       reminder_text: data.message,
       target_url: data.link || undefined,
       contact: data.contact,
-      scheduled_at: convertLocalToUTC(data.datetime),
+      scheduled_at: scheduledAtUTC,
     };
+
+    console.log('📤 Sending to backend:', {
+      scheduled_at_utc: scheduledAtUTC,
+      original_local: data.datetime,
+      timezone: data.timezone
+    });
 
     // Make API call from server
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
@@ -93,6 +115,7 @@ function validateFormData(data: {
   link: string;
   contact: string;
   datetime: string;
+  timezone: string;
 }): string[] {
   const errors: string[] = [];
 
@@ -110,11 +133,20 @@ function validateFormData(data: {
 
   if (!data.datetime || data.datetime.trim().length === 0) {
     errors.push('Reminder date and time is required');
+  } else if (!data.timezone) {
+    errors.push('Timezone information is missing. Please refresh the page and try again.');
   } else {
-    const reminderDate = new Date(data.datetime);
-    const now = new Date();
-    if (reminderDate <= now) {
-      errors.push('Reminder date must be in the future');
+    // Validate datetime by attempting conversion to UTC
+    const utcDateTime = convertLocalToUTC(data.datetime, data.timezone);
+    if (!utcDateTime) {
+      errors.push('Invalid date and time format');
+    } else {
+      // Check if the datetime is in the future (using UTC comparison)
+      const reminderUtc = new Date(utcDateTime);
+      const nowUtc = new Date();
+      if (reminderUtc <= nowUtc) {
+        errors.push('Reminder date must be in the future');
+      }
     }
   }
 

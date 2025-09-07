@@ -151,6 +151,12 @@ export const ReminderFormClient: React.FC<FormComponentProps> = ({ action }) => 
             className='bg-input border-border focus:ring-ring'
             required
           />
+          {/* Hidden field with client timezone */}
+          <input
+            type='hidden'
+            name='timezone'
+            value={Intl.DateTimeFormat().resolvedOptions().timeZone}
+          />
           <DateShortcuts onDateSelect={handleDateSelect} />
         </div>
 
