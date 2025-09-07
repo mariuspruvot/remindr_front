@@ -14,6 +14,8 @@
 import { useState, useCallback } from 'react';
 import type { ReminderFormData } from '@/lib/types/reminder';
 import { validateReminderFormData } from '@/lib/utils/validation';
+import { getDateShortcut, formatDateTimeLocal } from '@/lib/utils/date';
+import type { DateShortcutType } from '@/lib/utils/date';
 
 /**
  * Initial form data state
@@ -44,7 +46,7 @@ export const useReminderForm = () => {
    */
   const updateField = useCallback(
     (field: keyof ReminderFormData, value: string) => {
-      setFormData(prev => ({ ...prev, [field]: value }));
+      setFormData((prev: ReminderFormData) => ({ ...prev, [field]: value }));
 
       // Clear errors when user starts typing
       if (errors.length > 0) {
@@ -79,8 +81,32 @@ export const useReminderForm = () => {
    * @param data - The form data to set
    */
   const setFormDataFromExternal = useCallback((data: Partial<ReminderFormData>) => {
-    setFormData(prev => ({ ...prev, ...data }));
+    setFormData((prev: ReminderFormData) => ({ ...prev, ...data }));
   }, []);
+
+  /**
+   * Set datetime field using a date shortcut
+   * @param type - The type of date shortcut to apply
+   */
+  const setDateShortcut = useCallback((type: DateShortcutType) => {
+    const targetDate = getDateShortcut(type);
+    const formattedDateTime = formatDateTimeLocal(targetDate);
+    updateField('datetime', formattedDateTime);
+  }, [updateField]);
+
+  /**
+   * Paste content from clipboard to link field
+   */
+  const pasteFromClipboard = useCallback(async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        updateField('link', text);
+      }
+    } catch (error) {
+      console.warn('Failed to read from clipboard:', error);
+    }
+  }, [updateField]);
 
   return {
     // State
@@ -92,5 +118,7 @@ export const useReminderForm = () => {
     validateForm,
     resetForm,
     setFormDataFromExternal,
+    setDateShortcut,
+    pasteFromClipboard,
   };
 };

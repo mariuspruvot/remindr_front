@@ -57,14 +57,56 @@ export function getCurrentDateTimeLocal(): string {
 }
 
 /**
- * Convert datetime-local string to UTC ISO string
+ * Get browser's timezone offset as ISO string format
+ * @returns Timezone offset string (e.g., "+02:00", "-05:00")
+ */
+export function getBrowserTimezoneOffset(): string {
+  const offset = new Date().getTimezoneOffset();
+  const hours = Math.floor(Math.abs(offset) / 60);
+  const minutes = Math.abs(offset) % 60;
+  const sign = offset <= 0 ? '+' : '-';
+  return `${sign}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+}
+
+/**
+ * Convert datetime-local string to ISO string with browser timezone
+ * @param datetimeLocal - datetime-local string (YYYY-MM-DDTHH:MM)
+ * @returns ISO string with timezone (YYYY-MM-DDTHH:MM:SS+TZ)
+ */
+export function addTimezoneToDateTime(datetimeLocal: string): string {
+  // Add seconds if not present
+  const withSeconds = datetimeLocal.length === 16 ? `${datetimeLocal}:00` : datetimeLocal;
+  // Add browser timezone
+  const timezoneOffset = getBrowserTimezoneOffset();
+  return `${withSeconds}${timezoneOffset}`;
+}
+
+/**
+ * Convert datetime-local string to UTC ISO string with timezone awareness
  * @param datetimeLocal - datetime-local string (YYYY-MM-DDTHH:MM)
  * @returns UTC ISO string
  */
 export function convertLocalToUTC(datetimeLocal: string): string {
-  // Force UTC interpretation by adding timezone info
-  const date = new Date(datetimeLocal);
-  return date.toISOString();
+  // If the input already includes timezone info, use it directly
+  if (datetimeLocal.includes('+') || datetimeLocal.includes('Z')) {
+    console.log('🔍 Input already has timezone:', datetimeLocal);
+    const date = new Date(datetimeLocal);
+    const result = date.toISOString();
+    console.log('🔍 Converted to UTC:', result);
+    return result;
+  }
+
+  // For datetime-local inputs without timezone, add browser timezone first
+  const datetimeWithTimezone = addTimezoneToDateTime(datetimeLocal);
+
+  console.log('🔍 Input datetime-local:', datetimeLocal);
+  console.log('🔍 Added browser timezone:', datetimeWithTimezone);
+
+  // Now convert to UTC
+  const date = new Date(datetimeWithTimezone);
+  const result = date.toISOString();
+  console.log('🔍 Converted to UTC:', result);
+  return result;
 }
 
 /**
