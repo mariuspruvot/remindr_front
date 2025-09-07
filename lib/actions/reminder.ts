@@ -5,7 +5,7 @@
 
 'use server';
 
-import type { FormData } from '@/lib/types';
+// Using built-in FormData type
 import { convertLocalToUTC } from '@/lib/utils/date';
 
 interface ActionResult {

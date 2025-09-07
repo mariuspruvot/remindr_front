@@ -31,8 +31,8 @@ export const DateShortcuts: React.FC<DateShortcutsProps> = ({ onDateSelect }) =>
    * @param type - The type of date shortcut to apply
    */
   const handleDateShortcut = (type: 'tomorrow' | 'week' | 'month') => {
-    const targetDate = getDateShortcut(type);
-    const formattedDateTime = formatDateTimeLocal(targetDate);
+    const targetDateTime = getDateShortcut(type);
+    const formattedDateTime = formatDateTimeLocal(targetDateTime);
     onDateSelect(formattedDateTime);
   };
 

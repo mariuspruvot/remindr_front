@@ -89,8 +89,8 @@ export const useReminderForm = () => {
    * @param type - The type of date shortcut to apply
    */
   const setDateShortcut = useCallback((type: DateShortcutType) => {
-    const targetDate = getDateShortcut(type);
-    const formattedDateTime = formatDateTimeLocal(targetDate);
+    const targetDateTime = getDateShortcut(type);
+    const formattedDateTime = formatDateTimeLocal(targetDateTime);
     updateField('datetime', formattedDateTime);
   }, [updateField]);
 

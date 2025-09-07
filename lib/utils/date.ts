@@ -1,7 +1,9 @@
 /**
  * Date utility functions for reminder form
- * Provides date manipulation and formatting utilities
+ * Provides timezone-aware date manipulation and formatting using Luxon
  */
+
+import { DateTime } from 'luxon';
 
 /**
  * Date shortcut types for quick date selection
@@ -9,114 +11,132 @@
 export type DateShortcutType = 'tomorrow' | 'week' | 'month';
 
 /**
- * Get a future date based on shortcut type
+ * Get a future DateTime based on shortcut type (in user's local timezone)
  * @param type - The type of date shortcut
- * @returns Date object for the calculated date
+ * @returns DateTime object for the calculated date in user's timezone
  */
-export function getDateShortcut(type: DateShortcutType): Date {
-  const now = new Date();
+export function getDateShortcut(type: DateShortcutType): DateTime {
+  const now = DateTime.local();
 
   switch (type) {
     case 'tomorrow':
-      return new Date(now.getTime() + 24 * 60 * 60 * 1000);
+      return now.plus({ days: 1 });
     case 'week':
-      return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+      return now.plus({ weeks: 1 });
     case 'month':
-      return new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
+      return now.plus({ months: 1 });
     default:
       return now;
   }
 }
 
 /**
- * Format a date for datetime-local input
- * @param date - Date object to format
- * @returns Formatted date string (YYYY-MM-DDTHH:MM)
+ * Format a DateTime for datetime-local input (preserves local timezone)
+ * @param dateTime - DateTime object to format
+ * @returns Formatted date string (YYYY-MM-DDTHH:MM) in local timezone
  */
-export function formatDateTimeLocal(date: Date): string {
-  return date.toISOString().slice(0, 16);
+export function formatDateTimeLocal(dateTime: DateTime): string {
+  return dateTime.toFormat("yyyy-MM-dd'T'HH:mm");
 }
 
 /**
- * Check if a date is in the future
- * @param dateString - Date string to validate
- * @returns True if the date is in the future
+ * Format a Date object for datetime-local input (legacy support)
+ * @param date - Date object to format
+ * @returns Formatted date string (YYYY-MM-DDTHH:MM) in local timezone
  */
-export function isFutureDate(dateString: string): boolean {
-  const date = new Date(dateString);
-  const now = new Date();
-  return date > now;
+export function formatDateTimeLocalFromDate(date: Date): string {
+  return formatDateTimeLocal(DateTime.fromJSDate(date));
+}
+
+/**
+ * Check if a datetime string is in the future
+ * @param datetimeString - datetime-local string (YYYY-MM-DDTHH:MM) or ISO string
+ * @returns True if the datetime is in the future
+ */
+export function isFutureDate(datetimeString: string): boolean {
+  let dateTime: DateTime;
+
+  // If the string looks like datetime-local format (no timezone info)
+  if (datetimeString.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)) {
+    // Treat as local timezone
+    dateTime = DateTime.fromISO(datetimeString);
+  } else {
+    // Parse as ISO string (with timezone)
+    dateTime = DateTime.fromISO(datetimeString);
+  }
+
+  const now = DateTime.local();
+  return dateTime > now;
 }
 
 /**
  * Get current date formatted for datetime-local input
- * @returns Current date formatted for input
+ * @returns Current date formatted for input in user's timezone
  */
 export function getCurrentDateTimeLocal(): string {
-  return formatDateTimeLocal(new Date());
+  return formatDateTimeLocal(DateTime.local());
 }
 
 /**
- * Get browser's timezone offset as ISO string format
- * @returns Timezone offset string (e.g., "+02:00", "-05:00")
+ * Get browser's timezone name using Luxon
+ * @returns Timezone name (e.g., "America/New_York", "Europe/London")
  */
-export function getBrowserTimezoneOffset(): string {
-  const offset = new Date().getTimezoneOffset();
-  const hours = Math.floor(Math.abs(offset) / 60);
-  const minutes = Math.abs(offset) % 60;
-  const sign = offset <= 0 ? '+' : '-';
-  return `${sign}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+export function getBrowserTimezone(): string {
+  return DateTime.local().zoneName || 'UTC';
 }
 
 /**
- * Convert datetime-local string to ISO string with browser timezone
- * @param datetimeLocal - datetime-local string (YYYY-MM-DDTHH:MM)
- * @returns ISO string with timezone (YYYY-MM-DDTHH:MM:SS+TZ)
- */
-export function addTimezoneToDateTime(datetimeLocal: string): string {
-  // Add seconds if not present
-  const withSeconds = datetimeLocal.length === 16 ? `${datetimeLocal}:00` : datetimeLocal;
-  // Add browser timezone
-  const timezoneOffset = getBrowserTimezoneOffset();
-  return `${withSeconds}${timezoneOffset}`;
-}
-
-/**
- * Convert datetime-local string to UTC ISO string with timezone awareness
- * @param datetimeLocal - datetime-local string (YYYY-MM-DDTHH:MM)
- * @returns UTC ISO string
+ * Convert datetime-local string to UTC ISO string with proper timezone handling
+ * This is the KEY function that fixes the timezone issue!
+ * 
+ * @param datetimeLocal - datetime-local string (YYYY-MM-DDTHH:MM) from browser form
+ * @returns UTC ISO string that can be sent to backend
  */
 export function convertLocalToUTC(datetimeLocal: string): string {
-  // If the input already includes timezone info, use it directly
-  if (datetimeLocal.includes('+') || datetimeLocal.includes('Z')) {
-    console.log('🔍 Input already has timezone:', datetimeLocal);
-    const date = new Date(datetimeLocal);
-    const result = date.toISOString();
-    console.log('🔍 Converted to UTC:', result);
-    return result;
+  // If the input already includes timezone info, parse it directly
+  if (datetimeLocal.includes('+') || datetimeLocal.includes('Z') || datetimeLocal.includes('-', 10)) {
+    const dateTime = DateTime.fromISO(datetimeLocal);
+    return dateTime.toUTC().toISO() || '';
   }
 
-  // For datetime-local inputs without timezone, add browser timezone first
-  const datetimeWithTimezone = addTimezoneToDateTime(datetimeLocal);
+  // For datetime-local inputs (no timezone), treat as local timezone
+  // This is the critical fix - we interpret the datetime-local as local time
+  const localDateTime = DateTime.fromISO(datetimeLocal, { zone: 'local' });
 
-  console.log('🔍 Input datetime-local:', datetimeLocal);
-  console.log('🔍 Added browser timezone:', datetimeWithTimezone);
+  if (!localDateTime.isValid) {
+    console.error('Invalid datetime string:', datetimeLocal);
+    return '';
+  }
 
-  // Now convert to UTC
-  const date = new Date(datetimeWithTimezone);
-  const result = date.toISOString();
-  console.log('🔍 Converted to UTC:', result);
+  // Convert to UTC and return as ISO string
+  const utcDateTime = localDateTime.toUTC();
+  const result = utcDateTime.toISO() || '';
+
+  console.log('🌍 Timezone conversion:', {
+    input: datetimeLocal,
+    localTimezone: getBrowserTimezone(),
+    localDateTime: localDateTime.toISO(),
+    utcResult: result
+  });
+
   return result;
 }
 
 /**
- * Convert datetime-local string to UTC ISO string with explicit timezone
- * @param datetimeLocal - datetime-local string (YYYY-MM-DDTHH:MM)
- * @returns UTC ISO string with explicit timezone
+ * Convert UTC datetime back to local datetime for display
+ * @param utcIsoString - UTC ISO string from backend
+ * @returns DateTime in local timezone
  */
-export function convertLocalToUTCExplicit(datetimeLocal: string): string {
-  // Create date and force UTC interpretation
-  const date = new Date(datetimeLocal);
-  // Return with explicit UTC timezone
-  return date.toISOString().replace('Z', '+00:00');
+export function convertUTCToLocal(utcIsoString: string): DateTime {
+  return DateTime.fromISO(utcIsoString, { zone: 'utc' }).toLocal();
+}
+
+/**
+ * Convert UTC datetime back to datetime-local string for form inputs
+ * @param utcIsoString - UTC ISO string from backend
+ * @returns datetime-local string (YYYY-MM-DDTHH:MM)
+ */
+export function convertUTCToDateTimeLocal(utcIsoString: string): string {
+  const localDateTime = convertUTCToLocal(utcIsoString);
+  return formatDateTimeLocal(localDateTime);
 }
