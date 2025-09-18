@@ -29,7 +29,7 @@ export default function RemindrApp() {
                     </p>
                 </div>
 
-                {/* Form with Server Action */}
+                {/* Form with Server Action. */}
                 <ReminderFormSSR />
 
                 {/* Footer */}
