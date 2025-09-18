@@ -2,6 +2,7 @@ import type React from 'react';
 import type { Metadata } from 'next';
 import { Analytics } from '@vercel/analytics/next';
 import { Suspense } from 'react';
+import { ClerkProvider } from '@clerk/nextjs';
 import '../styles/globals.css';
 
 export const metadata: Metadata = {
@@ -23,11 +24,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' className='dark'>
-      <body>
-        <Suspense fallback={null}>{children}</Suspense>
-        <Analytics />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang='en' className='dark'>
+        <body>
+          <Suspense fallback={null}>{children}</Suspense>
+          <Analytics />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

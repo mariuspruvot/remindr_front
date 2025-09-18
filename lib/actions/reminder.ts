@@ -7,6 +7,7 @@
 
 // Using built-in FormData type
 import { convertLocalToUTC } from '@/lib/utils/date';
+import { auth } from '@clerk/nextjs/server';
 
 interface ActionResult {
   success: boolean;
@@ -23,6 +24,17 @@ export async function createReminderAction(
   formData: FormData
 ): Promise<ActionResult> {
   try {
+    // Get authentication from Clerk
+    const { getToken } = await auth();
+    const token = await getToken();
+
+    if (!token) {
+      return {
+        success: false,
+        message: 'Authentication required. Please sign in.',
+      };
+    }
+
     // Extract data from FormData
     const data = {
       message: formData.get('message') as string,
@@ -72,13 +84,12 @@ export async function createReminderAction(
 
     // Make API call from server
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
-    const apiToken = process.env.NEXT_PUBLIC_API_TOKEN || 'toto';
 
     const response = await fetch(`${apiUrl}/reminders/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiToken}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(apiData),
     });

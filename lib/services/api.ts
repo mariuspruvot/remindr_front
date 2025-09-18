@@ -4,12 +4,11 @@
  */
 
 import type {
-  CreateReminderRequest,
   CreateReminderResponse,
   Reminder,
   ShortURL,
-  ApiError,
 } from '@/lib/types';
+import type { ReminderFormData } from '@/lib/types/reminder';
 import { convertLocalToUTC } from '@/lib/utils/date';
 
 class ApiError extends Error {
@@ -25,30 +24,32 @@ class ApiError extends Error {
 
 class ReminderApiService {
   private readonly baseUrl: string;
-  private readonly apiToken: string;
 
   constructor(
     baseUrl: string = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001',
-    apiToken: string = process.env.NEXT_PUBLIC_API_TOKEN || 'toto'
   ) {
     this.baseUrl = baseUrl;
-    this.apiToken = apiToken;
   }
 
   /**
    * Get authenticated headers for API requests
    */
-  private getAuthHeaders(): HeadersInit {
-    return {
+  private async getAuthHeaders(token?: string): Promise<HeadersInit> {
+    const headers: HeadersInit = {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.apiToken}`,
     };
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    return headers;
   }
 
   /**
    * Create a new reminder
    */
-  async createReminder(data: CreateReminderRequest): Promise<CreateReminderResponse> {
+  async createReminder(data: ReminderFormData, token?: string): Promise<CreateReminderResponse> {
     try {
       // Transform frontend data to API format
       console.log(`API base URL: ${this.baseUrl}`);
@@ -61,7 +62,7 @@ class ReminderApiService {
 
       const response = await fetch(`${this.baseUrl}/api/reminders/`, {
         method: 'POST',
-        headers: this.getAuthHeaders(),
+        headers: await this.getAuthHeaders(token),
         body: JSON.stringify(apiData),
       });
 
@@ -86,10 +87,10 @@ class ReminderApiService {
   /**
    * Get reminder by ID
    */
-  async getReminder(id: string): Promise<Reminder> {
+  async getReminder(id: string, token?: string): Promise<Reminder> {
     try {
       const response = await fetch(`${this.baseUrl}/api/reminders/${id}`, {
-        headers: this.getAuthHeaders(),
+        headers: await this.getAuthHeaders(token),
       });
 
       if (!response.ok) {
@@ -115,7 +116,8 @@ class ReminderApiService {
    */
   async getShortUrl(
     reminderId: string,
-    generate: boolean = false
+    generate: boolean = false,
+    token?: string
   ): Promise<ShortURL | null> {
     try {
       const url = new URL(`${this.baseUrl}/api/reminders/${reminderId}/short-url`);
@@ -124,7 +126,7 @@ class ReminderApiService {
       }
 
       const response = await fetch(url.toString(), {
-        headers: this.getAuthHeaders(),
+        headers: await this.getAuthHeaders(token),
       });
 
       if (!response.ok) {
