@@ -20,12 +20,12 @@ import type { DateShortcutType } from '@/lib/utils/date';
 /**
  * Initial form data state
  */
-const INITIAL_FORM_DATA: ReminderFormData = {
+const getInitialFormData = (initialEmail?: string): ReminderFormData => ({
   link: '',
-  contact: '',
+  contact: initialEmail || '',
   datetime: '',
   message: '',
-};
+});
 
 /**
  * Custom hook for managing reminder form state
@@ -33,10 +33,11 @@ const INITIAL_FORM_DATA: ReminderFormData = {
  * Provides form data management, validation, and utility functions.
  * All state updates are memoized for optimal performance.
  *
+ * @param initialEmail - Optional initial email to pre-fill the contact field
  * @returns Object containing form state and management functions
  */
-export const useReminderForm = () => {
-  const [formData, setFormData] = useState<ReminderFormData>(INITIAL_FORM_DATA);
+export const useReminderForm = (initialEmail?: string) => {
+  const [formData, setFormData] = useState<ReminderFormData>(getInitialFormData(initialEmail));
   const [errors, setErrors] = useState<string[]>([]);
 
   /**
@@ -71,9 +72,9 @@ export const useReminderForm = () => {
    * Clears all form data and errors
    */
   const resetForm = useCallback(() => {
-    setFormData(INITIAL_FORM_DATA);
+    setFormData(getInitialFormData(initialEmail));
     setErrors([]);
-  }, []);
+  }, [initialEmail]);
 
   /**
    * Set form data from external source

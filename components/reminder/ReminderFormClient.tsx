@@ -40,14 +40,18 @@ import type { FormComponentProps } from '@/lib/types/reminder';
  * Automatically resets form on successful submission.
  *
  * @param action - Server action function to handle form submission
+ * @param initialEmail - Optional initial email to pre-fill the contact field
  * @returns JSX form element with all form fields and interactions
  */
-export const ReminderFormClient: React.FC<FormComponentProps> = ({ action }) => {
+export const ReminderFormClient: React.FC<FormComponentProps & { initialEmail?: string }> = ({ 
+  action, 
+  initialEmail 
+}) => {
   // Server action state management
   const [state, formAction] = useActionState(action, { success: false });
 
-  // Form state management using custom hook
-  const { formData, updateField, resetForm } = useReminderForm();
+  // Form state management using custom hook with initial email
+  const { formData, updateField, resetForm } = useReminderForm(initialEmail);
 
   /**
    * Reset form when server action succeeds
