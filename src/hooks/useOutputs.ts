@@ -52,10 +52,14 @@ export const useValidateOutput = () => {
       const { data } = await api.post(`/outputs/${uuid}/validate`, { code });
       return data;
     },
-    onSuccess: async () => {
-      showToast("Channel verified successfully!", "success");
-      // Force immediate refetch
-      await queryClient.refetchQueries({ queryKey: ["outputs"] });
+    onSuccess: async (data) => {
+      // Only show success toast if validation actually succeeded
+      if (data.success && data.confirmed) {
+        showToast("Channel verified successfully!", "success");
+        // Force immediate refetch
+        await queryClient.refetchQueries({ queryKey: ["outputs"] });
+      }
+      // If not successful, let the form handle the error message
     },
     onError: (error: any) => {
       showToast(
