@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import ChannelModal from "../components/ChannelModal";
@@ -23,6 +24,8 @@ export default function MainLayout({
   reminderModalTrigger,
   channelToValidate: externalChannelToValidate,
 }: MainLayoutProps) {
+  const queryClient = useQueryClient();
+
   // State for mobile sidebar visibility
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   // State for modals
@@ -90,15 +93,13 @@ export default function MainLayout({
   };
 
   const handleChannelSuccess = () => {
-    // Refresh channels list when a new channel is added
-    console.log("Channel added successfully!");
-    // TODO: Trigger channels list refresh
+    // Refresh channels list when a new channel is added/validated
+    queryClient.invalidateQueries({ queryKey: ["outputs"] });
   };
 
   const handleReminderSuccess = () => {
     // Refresh reminders list
-    console.log("Reminder saved successfully!");
-    // TODO: Trigger reminders list refresh
+    queryClient.invalidateQueries({ queryKey: ["reminders"] });
   };
 
   return (
