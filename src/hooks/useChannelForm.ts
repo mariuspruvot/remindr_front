@@ -183,10 +183,11 @@ export const useChannelForm = ({
       });
 
       if (result.success && result.confirmed) {
+        // Clear form state immediately on success
+        resetForm();
         // Toast is shown by mutation's onSuccess
         onSuccess(); // Trigger parent refresh
         onClose();
-        resetForm();
       } else {
         setAttemptsRemaining((prev) => prev - 1);
         setError(

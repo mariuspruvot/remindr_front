@@ -36,6 +36,7 @@ function ChannelModal({
     if (isOpen) {
       form.resetForm();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, channelToValidate]); // Also reset when channelToValidate changes
 
   const getChannelIcon = (type: OutputType) => {
