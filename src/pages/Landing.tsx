@@ -30,7 +30,7 @@ function Landing() {
 
   return (
     <motion.div
-      className="h-screen flex flex-col overflow-hidden relative bg-base-100"
+      className="min-h-screen flex flex-col overflow-y-auto overflow-x-hidden relative bg-base-100"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -74,13 +74,18 @@ function Landing() {
         transition={{ duration: 0.5 }}
         className="relative z-20 border-b border-base-300/30"
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Bell className="w-6 h-6 text-primary" strokeWidth={2.5} />
-            <span className="text-2xl font-bold tracking-tight">Remindr</span>
+            <Bell
+              className="w-5 h-5 sm:w-6 sm:h-6 text-primary"
+              strokeWidth={2.5}
+            />
+            <span className="text-xl sm:text-2xl font-bold tracking-tight">
+              Remindr
+            </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3">
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -88,30 +93,32 @@ function Landing() {
               aria-label="Toggle theme"
             >
               {isDark ? (
-                <Sun className="w-5 h-5" />
+                <Sun className="w-4 h-4 sm:w-5 sm:h-5" />
               ) : (
-                <Moon className="w-5 h-5" />
+                <Moon className="w-4 h-4 sm:w-5 sm:h-5" />
               )}
             </button>
 
             {isSignedIn ? (
               <Link
                 to="/dashboard"
-                className="btn btn-primary btn-sm gap-2 shadow-sm font-medium"
+                className="btn btn-primary btn-sm gap-1.5 sm:gap-2 shadow-sm font-medium text-xs sm:text-sm"
               >
-                Dashboard
-                <ArrowRight className="w-4 h-4" />
+                <span className="hidden xs:inline">Dashboard</span>
+                <span className="xs:hidden">App</span>
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Link>
             ) : (
               <>
                 <SignInButton mode="modal">
-                  <button className="btn btn-ghost btn-sm font-medium">
+                  <button className="btn btn-ghost btn-sm font-medium text-xs sm:text-sm px-2 sm:px-4">
                     Sign In
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="btn btn-primary btn-sm shadow-sm font-medium">
-                    Get Started
+                  <button className="btn btn-primary btn-sm shadow-sm font-medium text-xs sm:text-sm px-2 sm:px-4">
+                    <span className="hidden xs:inline">Get Started</span>
+                    <span className="xs:hidden">Start</span>
                   </button>
                 </SignUpButton>
               </>
@@ -120,16 +127,16 @@ function Landing() {
         </div>
       </motion.nav>
       {/* Main Content - Centered */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 pb-8">
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-12 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto w-full">
           {/* Hero Section */}
-          <div className="text-center mb-12 lg:mb-16">
+          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
             {/* Badge */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.1, duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-base-200 border border-base-300 text-sm font-medium mb-6"
+              className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-base-200 border border-base-300 text-xs sm:text-sm font-medium mb-4 sm:mb-6"
             >
               <span className="text-base-content/70">
                 Multi-Channel Intelligence
@@ -142,13 +149,13 @@ function Landing() {
               initial="initial"
               animate="animate"
               transition={{ delay: 0.2 }}
-              className="text-5xl md:text-6xl lg:text-7xl font-semibold text-base-content mb-5 leading-[1.05] tracking-[-0.02em]"
+              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-base-content mb-4 sm:mb-5 leading-[1.1] sm:leading-[1.05] tracking-[-0.02em] px-2"
             >
               Never{" "}
               <span className="relative inline-block font-medium italic text-base-content/90">
                 forget
                 <motion.span
-                  className="absolute -bottom-1 left-0 right-0 h-[2px] bg-primary/40"
+                  className="absolute -bottom-0.5 sm:-bottom-1 left-0 right-0 h-[1.5px] sm:h-[2px] bg-primary/40"
                   initial={{ scaleX: 0, originX: 0 }}
                   animate={{ scaleX: 1 }}
                   transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
@@ -163,7 +170,7 @@ function Landing() {
               initial="initial"
               animate="animate"
               transition={{ delay: 0.3 }}
-              className="text-lg md:text-xl italic text-base-content/60 mb-8 max-w-2xl mx-auto leading-relaxed"
+              className="text-base sm:text-lg md:text-xl italic text-base-content/60 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4"
             >
               Smart, multi-channel reminders that ensure you never miss what
               matters
@@ -175,20 +182,21 @@ function Landing() {
               initial="initial"
               animate="animate"
               transition={{ delay: 0.4 }}
-              className="mb-12"
+              className="mb-8 sm:mb-12"
             >
               {isSignedIn ? (
                 <Link to="/dashboard">
-                  <button className="btn btn-primary btn-lg gap-2 shadow-lg font-medium">
+                  <button className="btn btn-primary btn-md sm:btn-lg gap-2 shadow-lg font-medium">
                     Go to Dashboard
-                    <ArrowRight className="w-5 h-5" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 </Link>
               ) : (
                 <SignUpButton mode="modal">
-                  <button className="btn btn-primary btn-lg gap-2 shadow-lg font-medium">
-                    Get Started — Free
-                    <ArrowRight className="w-5 h-5" />
+                  <button className="btn btn-primary btn-md sm:btn-lg gap-2 shadow-lg font-medium">
+                    <span className="hidden xs:inline">Get Started — Free</span>
+                    <span className="xs:hidden">Get Started</span>
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 </SignUpButton>
               )}
@@ -200,7 +208,7 @@ function Landing() {
             variants={stagger}
             initial="initial"
             animate="animate"
-            className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 max-w-5xl mx-auto"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 max-w-5xl mx-auto"
           >
             {[
               {
@@ -233,20 +241,20 @@ function Landing() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
-                className="p-6 lg:p-8 border border-base-300/50 rounded-2xl bg-base-100/50 backdrop-blur-sm hover:border-base-300 transition-colors duration-300"
+                className="p-5 sm:p-6 lg:p-8 border border-base-300/50 rounded-xl sm:rounded-2xl bg-base-100/50 backdrop-blur-sm hover:border-base-300 transition-colors duration-300"
               >
                 <div
-                  className={`inline-flex p-2.5 rounded-xl ${feature.bgColor} mb-4`}
+                  className={`inline-flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl ${feature.bgColor} mb-3 sm:mb-4`}
                 >
                   <feature.icon
-                    className={`w-5 h-5 ${feature.iconColor}`}
+                    className={`w-4 h-4 sm:w-5 sm:h-5 ${feature.iconColor}`}
                     strokeWidth={2}
                   />
                 </div>
-                <h3 className="text-lg font-semibold mb-2 text-base-content">
+                <h3 className="text-base sm:text-lg font-semibold mb-1.5 sm:mb-2 text-base-content">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-base-content/60 leading-relaxed">
+                <p className="text-xs sm:text-sm text-base-content/60 leading-relaxed">
                   {feature.description}
                 </p>
               </motion.div>
@@ -259,9 +267,9 @@ function Landing() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8, duration: 0.5 }}
-        className="relative z-10 border-t border-base-300/30 py-4"
+        className="relative z-10 border-t border-base-300/30 py-3 sm:py-4"
       >
-        <div className="max-w-7xl mx-auto px-6 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
           <p className="text-xs text-base-content/50">
             © 2025 Remindr. Built with care.
           </p>

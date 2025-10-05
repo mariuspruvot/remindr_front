@@ -37,13 +37,13 @@ function Dashboard({ onEditReminder, onResendVerification }: DashboardProps) {
   const sentReminders = reminders.filter((r) => r.sent).length;
   const activeChannels = channels.filter((c) => c.confirmed).length;
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-semibold text-base-content mb-2">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-base-content mb-1 sm:mb-2">
           Dashboard
         </h1>
-        <p className="text-base-content/60">
+        <p className="text-sm sm:text-base text-base-content/60">
           Manage your reminders and channels
         </p>
       </div>
