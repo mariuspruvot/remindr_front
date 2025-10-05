@@ -21,7 +21,7 @@ function OutputChannels({ outputs, variant = "compact" }: OutputChannelsProps) {
           const Icon = getOutputIcon(output.output_type);
           return (
             <div
-              key={output.id}
+              key={output.uuid}
               className="inline-flex items-center gap-1 text-base-content/70"
               title={`${output.output_type}${
                 output.confirmed ? " (verified)" : ""
@@ -43,7 +43,7 @@ function OutputChannels({ outputs, variant = "compact" }: OutputChannelsProps) {
         const Icon = getOutputIcon(output.output_type);
         return (
           <div
-            key={output.id}
+            key={output.uuid}
             className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-base-300 bg-base-100 text-base-content/70"
           >
             <Icon className="w-3.5 h-3.5" />

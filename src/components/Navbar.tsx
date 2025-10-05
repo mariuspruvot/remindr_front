@@ -1,4 +1,6 @@
-import { Bell, User, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
+import { Link } from "react-router-dom";
+import { UserButton } from "@clerk/clerk-react";
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -20,19 +22,25 @@ function Navbar({ onMenuClick }: NavbarProps) {
           </button>
 
           {/* Logo */}
-          <a href="/" className="text-xl font-semibold text-base-content">
+          <Link
+            to="/dashboard"
+            className="text-xl font-semibold text-base-content"
+          >
             Remindr
-          </a>
+          </Link>
         </div>
 
         {/* Right side actions */}
         <div className="flex items-center gap-2 lg:gap-3">
-          <button className="btn btn-ghost btn-sm btn-circle">
-            <Bell className="w-5 h-5" />
-          </button>
-          <button className="btn btn-ghost btn-sm btn-circle">
-            <User className="w-5 h-5" />
-          </button>
+          {/* Clerk User Button with profile menu */}
+          <UserButton
+            afterSignOutUrl="/"
+            appearance={{
+              elements: {
+                avatarBox: "w-9 h-9",
+              },
+            }}
+          />
         </div>
       </div>
     </header>

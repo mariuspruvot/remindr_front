@@ -1,21 +1,31 @@
 import { LayoutDashboard, Bell, Radio, Settings, Plus, X } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 interface SidebarProps {
-  activeSection?: string;
   isOpen: boolean;
   onClose: () => void;
+  onAddChannel: () => void;
+  onNewReminder: () => void;
 }
 
 function Sidebar({
-  activeSection = "dashboard",
   isOpen,
   onClose,
+  onAddChannel,
+  onNewReminder,
 }: SidebarProps) {
+  const location = useLocation();
+
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", Icon: LayoutDashboard },
-    { id: "reminders", label: "Reminders", Icon: Bell },
-    { id: "channels", label: "Channels", Icon: Radio },
-    { id: "settings", label: "Settings", Icon: Settings },
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      Icon: LayoutDashboard,
+      path: "/dashboard",
+    },
+    { id: "reminders", label: "Reminders", Icon: Bell, path: "/reminders" },
+    { id: "channels", label: "Channels", Icon: Radio, path: "/channels" },
+    { id: "settings", label: "Settings", Icon: Settings, path: "/settings" },
   ];
 
   return (
@@ -57,21 +67,41 @@ function Sidebar({
           </button>
         </div>
 
-        {/* Quick Action Button - Desktop only (mobile has FAB) */}
-        <button className="hidden lg:flex btn btn-sm w-full mb-6 gap-2 bg-base-content text-base-100 hover:bg-base-content/90 border-none">
-          <Plus className="w-4 h-4" />
-          New Reminder
-        </button>
+        {/* Quick Action Buttons */}
+        <div className="flex flex-col gap-2 mb-6">
+          {/* New Reminder - Desktop only (mobile has FAB) */}
+          <button
+            onClick={() => {
+              onNewReminder();
+              onClose(); // Close sidebar after click
+            }}
+            className="hidden lg:flex btn btn-sm w-full gap-2 bg-base-content text-base-100 hover:bg-base-content/90 border-none"
+          >
+            <Plus className="w-4 h-4" />
+            New Reminder
+          </button>
+          {/* Add Channel - Available on all screens */}
+          <button
+            onClick={() => {
+              onAddChannel();
+              onClose(); // Close sidebar after click on mobile
+            }}
+            className="btn btn-sm btn-outline w-full gap-2"
+          >
+            <Radio className="w-4 h-4" />
+            Add Channel
+          </button>
+        </div>
 
         {/* Navigation Menu */}
         <nav className="space-y-1">
           {menuItems.map((item) => {
             const Icon = item.Icon;
-            const isActive = activeSection === item.id;
+            const isActive = location.pathname === item.path;
             return (
-              <a
+              <Link
                 key={item.id}
-                href={`#${item.id}`}
+                to={item.path}
                 onClick={onClose}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive
@@ -81,7 +111,7 @@ function Sidebar({
               >
                 <Icon className="w-4 h-4" />
                 {item.label}
-              </a>
+              </Link>
             );
           })}
         </nav>

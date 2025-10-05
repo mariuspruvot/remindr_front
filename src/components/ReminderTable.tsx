@@ -11,9 +11,11 @@ import type { Reminder } from "../types/reminder.types";
 
 interface ReminderTableProps {
   reminders: Reminder[];
+  onEdit: (reminder: Reminder) => void;
+  onDelete: (reminderId: string) => void;
 }
 
-function ReminderTable({ reminders }: ReminderTableProps) {
+function ReminderTable({ reminders, onEdit, onDelete }: ReminderTableProps) {
   return (
     <div className="border border-base-300 rounded-xl bg-base-100 overflow-hidden">
       {/* Table wrapper with horizontal scroll */}
@@ -31,7 +33,7 @@ function ReminderTable({ reminders }: ReminderTableProps) {
           </thead>
           <tbody>
             {reminders.map((reminder) => (
-              <tr key={reminder.id} className="hover:bg-base-200/50">
+              <tr key={reminder.uuid} className="hover:bg-base-200/50">
                 {/* Message */}
                 <td className="font-medium text-base-content min-w-[200px] max-w-[300px]">
                   <div className="truncate">{reminder.reminder_text}</div>
@@ -79,12 +81,22 @@ function ReminderTable({ reminders }: ReminderTableProps) {
                 <td className="text-right min-w-[100px]">
                   <div className="flex items-center justify-end gap-1">
                     <button
+                      onClick={() => onEdit(reminder)}
                       className="btn btn-ghost btn-sm btn-square"
                       aria-label="Edit reminder"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            "Are you sure you want to delete this reminder?"
+                          )
+                        ) {
+                          onDelete(reminder.uuid);
+                        }
+                      }}
                       className="btn btn-ghost btn-sm btn-square text-error hover:bg-error/10"
                       aria-label="Delete reminder"
                     >
