@@ -88,15 +88,7 @@ function ReminderTable({ reminders, onEdit, onDelete }: ReminderTableProps) {
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            "Are you sure you want to delete this reminder?"
-                          )
-                        ) {
-                          onDelete(reminder.uuid);
-                        }
-                      }}
+                      onClick={() => onDelete(reminder.uuid)}
                       className="btn btn-ghost btn-sm btn-square text-error hover:bg-error/10"
                       aria-label="Delete reminder"
                     >

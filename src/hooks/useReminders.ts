@@ -96,7 +96,7 @@ export const useDeleteReminder = () => {
 
   return useMutation({
     mutationFn: async (uuid: string) => {
-      await api.delete(`/reminders/${uuid}/`);
+      await api.delete(`/reminders/${uuid}`);
       return uuid;
     },
     onSuccess: () => {

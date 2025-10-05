@@ -22,7 +22,9 @@ function Dashboard({ onEditReminder, onResendVerification }: DashboardProps) {
   const deleteOutput = useDeleteOutput();
 
   const handleDeleteReminder = async (reminderId: string) => {
-    await deleteReminder.mutateAsync(reminderId);
+    if (window.confirm("Are you sure you want to delete this reminder?")) {
+      await deleteReminder.mutateAsync(reminderId);
+    }
   };
 
   const handleDeleteChannel = async (channelId: string) => {
