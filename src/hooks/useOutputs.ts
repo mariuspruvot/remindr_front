@@ -52,9 +52,10 @@ export const useValidateOutput = () => {
       const { data } = await api.post(`/outputs/${uuid}/validate`, { code });
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["outputs"] });
+    onSuccess: async () => {
       showToast("Channel verified successfully!", "success");
+      // Force immediate refetch
+      await queryClient.refetchQueries({ queryKey: ["outputs"] });
     },
     onError: (error: any) => {
       showToast(
