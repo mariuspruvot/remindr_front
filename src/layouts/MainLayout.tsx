@@ -10,7 +10,7 @@ import type { Output, Reminder } from "../types/reminder.types";
 
 interface MainLayoutProps {
   children: React.ReactNode;
-  reminderToEdit?: Reminder;
+  reminderEditTrigger?: { trigger: number; reminder: Reminder } | null;
   channelModalTrigger?: number;
   reminderModalTrigger?: number;
   channelToValidate?: Output | null;
@@ -18,7 +18,7 @@ interface MainLayoutProps {
 
 export default function MainLayout({
   children,
-  reminderToEdit: externalReminderToEdit,
+  reminderEditTrigger,
   channelModalTrigger,
   reminderModalTrigger,
   channelToValidate: externalChannelToValidate,
@@ -52,16 +52,16 @@ export default function MainLayout({
   };
 
   const openReminderModal = (reminder?: Reminder) => {
-    setReminderToEdit(reminder || externalReminderToEdit);
+    setReminderToEdit(reminder);
     setIsReminderModalOpen(true);
   };
 
-  // Open modal when external reminder is set (from Edit button)
+  // Open modal when edit trigger fires (from Edit button)
   useEffect(() => {
-    if (externalReminderToEdit) {
-      openReminderModal(externalReminderToEdit);
+    if (reminderEditTrigger && reminderEditTrigger.trigger > 0) {
+      openReminderModal(reminderEditTrigger.reminder);
     }
-  }, [externalReminderToEdit]);
+  }, [reminderEditTrigger]);
 
   // Open channel modal when trigger changes (from Dashboard "Add Channel" button)
   useEffect(() => {
@@ -103,12 +103,43 @@ export default function MainLayout({
 
   return (
     <motion.div
-      className="min-h-screen bg-base-100"
+      className="min-h-screen bg-base-100 relative"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
+      {/* SVG Noise Filter */}
+      <svg className="absolute w-0 h-0">
+        <defs>
+          <filter id="noise">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.8"
+              numOctaves="4"
+            />
+            <feColorMatrix type="saturate" values="0" />
+          </filter>
+        </defs>
+      </svg>
+
+      {/* Dots pattern + Noise texture overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-60"
+        style={{
+          backgroundImage:
+            "radial-gradient(color-mix(in srgb, currentColor 20%, transparent) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+          color: "hsl(var(--bc))",
+        }}
+      />
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.015]"
+        style={{
+          filter: "url(#noise)",
+        }}
+      />
+
       <Navbar onMenuClick={toggleSidebar} />
       <div className="flex">
         <Sidebar
@@ -137,6 +168,7 @@ export default function MainLayout({
         channelToValidate={channelToValidate}
       />
       <ReminderFormModal
+        key={reminderToEdit ? `edit-${reminderToEdit.uuid}` : "create"}
         isOpen={isReminderModalOpen}
         onClose={closeReminderModal}
         onSuccess={handleReminderSuccess}

@@ -5,8 +5,9 @@
 
 import { motion } from "framer-motion";
 import { SignInButton, SignUpButton, useUser } from "@clerk/clerk-react";
-import { ArrowRight, Bell, Zap, Shield } from "lucide-react";
+import { ArrowRight, Bell, Zap, Shield, Moon, Sun } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTheme } from "../hooks/useTheme";
 
 // Subtle animation variants
 const fadeIn = {
@@ -25,6 +26,7 @@ const stagger = {
 
 function Landing() {
   const { isSignedIn } = useUser();
+  const { isDark, toggleTheme } = useTheme();
 
   return (
     <motion.div
@@ -50,11 +52,12 @@ function Landing() {
 
       {/* Dots pattern + Noise texture overlay */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none opacity-60"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px)",
+            "radial-gradient(color-mix(in srgb, currentColor 20%, transparent) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
+          color: "hsl(var(--bc))",
         }}
       />
       <div
@@ -77,7 +80,20 @@ function Landing() {
             <span className="text-2xl font-bold tracking-tight">Remindr</span>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="btn btn-ghost btn-sm btn-circle"
+              aria-label="Toggle theme"
+            >
+              {isDark ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
+            </button>
+
             {isSignedIn ? (
               <Link
                 to="/dashboard"
@@ -147,9 +163,10 @@ function Landing() {
               initial="initial"
               animate="animate"
               transition={{ delay: 0.3 }}
-              className="text-lg md:text-xl text-base-content/60 mb-8 max-w-2xl mx-auto leading-relaxed"
+              className="text-lg md:text-xl italic text-base-content/60 mb-8 max-w-2xl mx-auto leading-relaxed"
             >
-              Smart reminders delivered exactly when you need them.
+              Smart, multi-channel reminders that ensure you never miss what
+              matters
             </motion.p>
 
             {/* CTA */}

@@ -14,7 +14,7 @@ interface OutputChannelsProps {
 
 function OutputChannels({ outputs, variant = "compact" }: OutputChannelsProps) {
   if (variant === "compact") {
-    // Compact view for tables - just icons
+    // Compact view for modals - icons + identifier
     return (
       <div className="flex items-center gap-2 flex-wrap">
         {outputs.map((output) => {
@@ -22,12 +22,13 @@ function OutputChannels({ outputs, variant = "compact" }: OutputChannelsProps) {
           return (
             <div
               key={output.uuid}
-              className="inline-flex items-center gap-1 text-base-content/70"
+              className="inline-flex items-center gap-2 text-base-content/70"
               title={`${output.output_type}${
                 output.confirmed ? " (verified)" : ""
               }`}
             >
               <Icon className="w-4 h-4" />
+              <span className="text-sm">{output.identifier}</span>
               {output.confirmed && <Check className="w-3 h-3 text-success" />}
             </div>
           );

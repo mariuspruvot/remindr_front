@@ -86,11 +86,11 @@ export const getMinScheduleTime = (): string => {
 };
 
 /**
- * Gets a default datetime for new reminders (now + 5 minutes)
- * Provides a sensible default that gives users a bit of buffer time
+ * Gets a default datetime for new reminders (now + 1 minute)
+ * Sets to minimum allowed time (immediate reminders)
  *
  * @returns String in datetime-local format
  */
 export const getDefaultScheduleTime = (): string => {
-  return toDateTimeLocalFormat(getFutureDate(5));
+  return toDateTimeLocalFormat(getFutureDate(1));
 };

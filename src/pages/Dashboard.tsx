@@ -1,4 +1,4 @@
-import { Bell, CheckCircle, Radio, ArrowRight, Loader2 } from "lucide-react";
+import { Bell, Clock, Send, Radio, ArrowRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import StatsCard from "../components/StatsCard";
 import ReminderTable from "../components/ReminderTable";
@@ -31,11 +31,8 @@ function Dashboard({ onEditReminder, onResendVerification }: DashboardProps) {
 
   // Calculate stats
   const totalReminders = reminders.length;
+  const pendingReminders = reminders.filter((r) => !r.sent).length;
   const sentReminders = reminders.filter((r) => r.sent).length;
-  const successRate =
-    totalReminders > 0
-      ? ((sentReminders / totalReminders) * 100).toFixed(1)
-      : "0";
   const activeChannels = channels.filter((c) => c.confirmed).length;
   return (
     <div className="p-6 lg:p-8 max-w-7xl mx-auto">
@@ -50,22 +47,27 @@ function Dashboard({ onEditReminder, onResendVerification }: DashboardProps) {
       </div>
 
       {/* Stats Cards - Responsive Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
         <StatsCard
           title="Total Reminders"
           value={remindersLoading ? "..." : totalReminders}
-          subtitle={
-            sentReminders > 0 ? `${sentReminders} sent` : "No reminders sent"
-          }
+          subtitle="All time"
           Icon={Bell}
           trend="neutral"
         />
         <StatsCard
-          title="Success Rate"
-          value={remindersLoading ? "..." : `${successRate}%`}
-          subtitle="Delivery rate"
-          Icon={CheckCircle}
-          trend={Number(successRate) >= 90 ? "up" : "neutral"}
+          title="Pending"
+          value={remindersLoading ? "..." : pendingReminders}
+          subtitle={pendingReminders > 0 ? "Scheduled" : "All sent"}
+          Icon={Clock}
+          trend="neutral"
+        />
+        <StatsCard
+          title="Sent"
+          value={remindersLoading ? "..." : sentReminders}
+          subtitle={sentReminders > 0 ? "Delivered" : "No reminders yet"}
+          Icon={Send}
+          trend={sentReminders > 0 ? "up" : "neutral"}
         />
         <StatsCard
           title="Active Channels"

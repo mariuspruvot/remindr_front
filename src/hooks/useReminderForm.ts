@@ -98,22 +98,25 @@ export const useReminderForm = ({
   /**
    * Initialize form with reminder data in edit mode
    * Or set defaults in create mode
+   * IMPORTANT: Reset on every open to prevent state pollution
    */
   useEffect(() => {
-    if (mode === "edit" && reminder) {
-      // Load existing reminder data
-      setReminderText(reminder.reminder_text);
-      setTargetUrl(reminder.target_url || "");
-      setScheduledAt(isoToDateTimeLocal(reminder.scheduled_at));
-      setSelectedOutputIds(reminder.outputs.map((o) => o.uuid));
-    } else if (isOpen) {
-      // Create mode: set defaults
-      setReminderText("");
-      setTargetUrl("");
-      setScheduledAt(getDefaultScheduleTime());
-      setSelectedOutputIds([]);
+    if (isOpen) {
+      if (mode === "edit" && reminder) {
+        // Load existing reminder data
+        setReminderText(reminder.reminder_text);
+        setTargetUrl(reminder.target_url || "");
+        setScheduledAt(isoToDateTimeLocal(reminder.scheduled_at));
+        setSelectedOutputIds(reminder.outputs.map((o) => o.uuid));
+      } else {
+        // Create mode: set defaults
+        setReminderText("");
+        setTargetUrl("");
+        setScheduledAt(getDefaultScheduleTime());
+        setSelectedOutputIds([]);
+      }
+      setError(null);
     }
-    setError(null);
   }, [mode, reminder, isOpen]);
 
   /**

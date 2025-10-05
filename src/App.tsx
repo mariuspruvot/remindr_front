@@ -24,7 +24,10 @@ import type { Output, Reminder } from "./types/reminder.types";
 function App() {
   const { getToken } = useAuth();
   const location = useLocation();
-  const [reminderToEdit, setReminderToEdit] = useState<Reminder | undefined>();
+  const [reminderEditTrigger, setReminderEditTrigger] = useState<{
+    trigger: number;
+    reminder: Reminder;
+  } | null>(null);
   const [channelModalTrigger, setChannelModalTrigger] = useState(0);
   const [reminderModalTrigger, setReminderModalTrigger] = useState(0);
   const [channelToValidate, setChannelToValidate] = useState<Output | null>(
@@ -36,12 +39,23 @@ function App() {
     setAuthTokenGetter(getToken);
   }, [getToken]);
 
+  // Reset modal triggers when changing pages to prevent modals opening on navigation
+  useEffect(() => {
+    setReminderEditTrigger(null);
+    setReminderModalTrigger(0);
+    setChannelModalTrigger(0);
+    setChannelToValidate(null);
+  }, [location.pathname]);
+
   const handleEditReminder = (reminder: Reminder) => {
-    setReminderToEdit(reminder);
+    setReminderEditTrigger((prev) => ({
+      trigger: (prev?.trigger || 0) + 1,
+      reminder,
+    }));
   };
 
   const handleNewReminder = () => {
-    setReminderToEdit(undefined);
+    setReminderEditTrigger(null);
     setReminderModalTrigger((prev) => prev + 1);
   };
 
@@ -69,7 +83,7 @@ function App() {
             <>
               <SignedIn>
                 <MainLayout
-                  reminderToEdit={reminderToEdit}
+                  reminderEditTrigger={reminderEditTrigger}
                   channelModalTrigger={channelModalTrigger}
                   reminderModalTrigger={reminderModalTrigger}
                   channelToValidate={channelToValidate}
@@ -95,7 +109,7 @@ function App() {
             <>
               <SignedIn>
                 <MainLayout
-                  reminderToEdit={reminderToEdit}
+                  reminderEditTrigger={reminderEditTrigger}
                   channelModalTrigger={channelModalTrigger}
                   reminderModalTrigger={reminderModalTrigger}
                   channelToValidate={channelToValidate}
@@ -119,7 +133,7 @@ function App() {
             <>
               <SignedIn>
                 <MainLayout
-                  reminderToEdit={reminderToEdit}
+                  reminderEditTrigger={reminderEditTrigger}
                   channelModalTrigger={channelModalTrigger}
                   reminderModalTrigger={reminderModalTrigger}
                   channelToValidate={channelToValidate}
@@ -143,7 +157,7 @@ function App() {
             <>
               <SignedIn>
                 <MainLayout
-                  reminderToEdit={reminderToEdit}
+                  reminderEditTrigger={reminderEditTrigger}
                   channelModalTrigger={channelModalTrigger}
                   reminderModalTrigger={reminderModalTrigger}
                   channelToValidate={channelToValidate}

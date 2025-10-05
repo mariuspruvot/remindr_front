@@ -49,72 +49,91 @@ function Sidebar({
           max-h-[80vh] lg:max-h-[calc(100vh-4rem)]
           overflow-y-auto
           border-b lg:border-b-0 lg:border-r border-base-300 bg-base-100
-          p-4
           transform transition-transform duration-300 ease-in-out
           lg:transform-none
           ${isOpen ? "translate-y-0" : "-translate-y-full lg:translate-y-0"}
         `}
       >
-        {/* Header with close button - only visible on mobile */}
-        <div className="flex items-center justify-between mb-4 lg:hidden">
-          <span className="text-lg font-semibold">Menu</span>
-          <button
-            onClick={onClose}
-            className="btn btn-ghost btn-sm btn-circle"
-            aria-label="Close menu"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Quick Action Buttons */}
-        <div className="flex flex-col gap-2 mb-6">
-          {/* New Reminder - Desktop only (mobile has FAB) */}
-          <button
-            onClick={() => {
-              onNewReminder();
-              onClose(); // Close sidebar after click
+        {/* Background pattern wrapper */}
+        <div className="relative h-full p-4">
+          {/* Background pattern - matches Landing/MainLayout */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-60"
+            style={{
+              backgroundImage:
+                "radial-gradient(color-mix(in srgb, currentColor 20%, transparent) 1px, transparent 1px)",
+              backgroundSize: "24px 24px",
+              color: "hsl(var(--bc))",
             }}
-            className="hidden lg:flex btn btn-sm w-full gap-2 bg-base-content text-base-100 hover:bg-base-content/90 border-none"
-          >
-            <Plus className="w-4 h-4" />
-            New Reminder
-          </button>
-          {/* Add Channel - Available on all screens */}
-          <button
-            onClick={() => {
-              onAddChannel();
-              onClose(); // Close sidebar after click on mobile
+          />
+          <div
+            className="absolute inset-0 pointer-events-none opacity-[0.015]"
+            style={{
+              filter: "url(#noise)",
             }}
-            className="btn btn-sm btn-outline w-full gap-2"
-          >
-            <Radio className="w-4 h-4" />
-            Add Channel
-          </button>
-        </div>
+          />
 
-        {/* Navigation Menu */}
-        <nav className="space-y-1">
-          {menuItems.map((item) => {
-            const Icon = item.Icon;
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.id}
-                to={item.path}
-                onClick={onClose}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-base-200 text-base-content"
-                    : "text-base-content/60 hover:bg-base-200/50 hover:text-base-content"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
+          {/* Header with close button - only visible on mobile */}
+          <div className="flex items-center justify-between mb-4 lg:hidden relative z-10">
+            <span className="text-lg font-semibold">Menu</span>
+            <button
+              onClick={onClose}
+              className="btn btn-ghost btn-sm btn-circle"
+              aria-label="Close menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Quick Action Buttons */}
+          <div className="flex flex-col gap-2 mb-6 relative z-10">
+            {/* New Reminder - Desktop only (mobile has FAB) */}
+            <button
+              onClick={() => {
+                onNewReminder();
+                onClose(); // Close sidebar after click
+              }}
+              className="hidden lg:flex btn btn-sm w-full gap-2 bg-base-content text-base-100 hover:bg-base-content/90 border-none"
+            >
+              <Plus className="w-4 h-4" />
+              New Reminder
+            </button>
+            {/* Add Channel - Available on all screens */}
+            <button
+              onClick={() => {
+                onAddChannel();
+                onClose(); // Close sidebar after click on mobile
+              }}
+              className="btn btn-sm btn-outline w-full gap-2"
+            >
+              <Radio className="w-4 h-4" />
+              Add Channel
+            </button>
+          </div>
+
+          {/* Navigation Menu */}
+          <nav className="space-y-1 relative z-10">
+            {menuItems.map((item) => {
+              const Icon = item.Icon;
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.id}
+                  to={item.path}
+                  onClick={onClose}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-base-200 text-base-content"
+                      : "text-base-content/60 hover:bg-base-200/50 hover:text-base-content"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
       </aside>
     </>
   );
