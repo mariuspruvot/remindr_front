@@ -17,7 +17,7 @@ function StatsCard({ title, value, subtitle, Icon, trend }: StatsCardProps) {
   };
 
   return (
-    <div className="border border-base-300 rounded-xl p-6 bg-base-100 shadow-lg hover:shadow-xl hover:border-base-content/20 transition-all">
+    <div className="border border-base-300 rounded-xl p-6 bg-base-100/70 shadow-lg hover:shadow-xl hover:border-base-content/20 transition-all">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-sm font-medium text-base-content/60 mb-2">

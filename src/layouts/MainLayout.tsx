@@ -43,6 +43,12 @@ export default function MainLayout({ children }: MainLayoutProps) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
+      style={{
+        backgroundImage:
+          "radial-gradient(color-mix(in srgb, currentColor 20%, transparent) 1px, transparent 1px)",
+        backgroundSize: "24px 24px",
+        color: "hsl(var(--bc))",
+      }}
     >
       {/* SVG Noise Filter */}
       <svg className="absolute w-0 h-0">
@@ -58,16 +64,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         </defs>
       </svg>
 
-      {/* Dots pattern + Noise texture overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-60"
-        style={{
-          backgroundImage:
-            "radial-gradient(color-mix(in srgb, currentColor 20%, transparent) 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-          color: "hsl(var(--bc))",
-        }}
-      />
+      {/* Noise texture overlay */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.015]"
         style={{
