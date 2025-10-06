@@ -17,7 +17,7 @@ interface ReminderTableProps {
 
 function ReminderTable({ reminders, onEdit, onDelete }: ReminderTableProps) {
   return (
-    <div className="border border-base-300 rounded-xl bg-base-100 overflow-hidden">
+    <div className="border border-base-300 rounded-xl bg-base-100 shadow-lg overflow-hidden">
       {/* Table wrapper with horizontal scroll */}
       <div className="overflow-x-auto">
         <table className="table table-hover table-sm sm:table-md">

@@ -14,15 +14,6 @@ function Navbar({ onMenuClick }: NavbarProps) {
     <header className="sticky top-0 z-50 border-b border-base-300 bg-base-100">
       {/* Background pattern - matches Landing/MainLayout */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-60"
-        style={{
-          backgroundImage:
-            "radial-gradient(color-mix(in srgb, currentColor 20%, transparent) 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-          color: "hsl(var(--bc))",
-        }}
-      />
-      <div
         className="absolute inset-0 pointer-events-none opacity-[0.015]"
         style={{
           filter: "url(#noise)",

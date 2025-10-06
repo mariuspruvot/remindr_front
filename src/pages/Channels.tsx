@@ -1,22 +1,20 @@
 /**
- * Channels page - Full channel management
- * Shows all channels with verification status and actions
+ * Channels Page - Full channel management
+ *
+ * REFACTORED:
+ * - Uses useModals() instead of prop callbacks
+ * - Uses PageHeader, LoadingState, ErrorState components
+ * - Cleaner and more maintainable
  */
 
-import { Plus, Loader2 } from "lucide-react";
+import { Plus } from "lucide-react";
+import { PageHeader, LoadingState, ErrorState } from "../components/common";
 import ChannelsList from "../components/ChannelsList";
 import { useOutputs, useDeleteOutput } from "../hooks/useOutputs";
-import type { Output } from "../types/reminder.types";
+import { useModals } from "../contexts/ModalContext";
 
-interface ChannelsPageProps {
-  onAddChannel: () => void;
-  onResendVerification: (channel: Output) => void;
-}
-
-function ChannelsPage({
-  onAddChannel,
-  onResendVerification,
-}: ChannelsPageProps) {
+function ChannelsPage() {
+  const { openChannelModal } = useModals();
   const { data: channels, isLoading, error } = useOutputs();
   const deleteOutput = useDeleteOutput();
 
@@ -29,21 +27,19 @@ function ChannelsPage({
 
   return (
     <div className="p-6 lg:p-8 max-w-7xl mx-auto">
-      {/* Page Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-semibold text-base-content mb-2">
-            Channels
-          </h1>
-          <p className="text-base-content/60">
-            {verifiedCount} verified, {pendingCount} pending
-          </p>
-        </div>
-        <button onClick={onAddChannel} className="btn btn-primary gap-2">
-          <Plus className="w-5 h-5" />
-          Add Channel
-        </button>
-      </div>
+      <PageHeader
+        title="Channels"
+        subtitle={`${verifiedCount} verified, ${pendingCount} pending`}
+        action={
+          <button
+            onClick={() => openChannelModal()}
+            className="btn btn-primary shadow-xl hover:shadow-2xl gap-2"
+          >
+            <Plus className="w-5 h-5" />
+            Add Channel
+          </button>
+        }
+      />
 
       {/* Info Banner */}
       <div className="alert mb-6">
@@ -67,17 +63,11 @@ function ChannelsPage({
       </div>
 
       {/* Loading State */}
-      {isLoading && (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      )}
+      {isLoading && <LoadingState size="lg" />}
 
       {/* Error State */}
       {error && (
-        <div className="alert alert-error">
-          <span>Failed to load channels. Please try again.</span>
-        </div>
+        <ErrorState message="Failed to load channels. Please try again." />
       )}
 
       {/* Channels List */}
@@ -85,7 +75,7 @@ function ChannelsPage({
         <ChannelsList
           channels={channels}
           onDelete={handleDelete}
-          onResendVerification={onResendVerification}
+          onResendVerification={(channel) => openChannelModal(channel)}
         />
       )}
     </div>

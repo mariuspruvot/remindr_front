@@ -3,27 +3,18 @@
  * Following DRY principle - single source of truth for common operations
  */
 
-import {
-  Mail,
-  MessageCircle,
-  Send,
-  Link2,
-  type LucideIcon,
-} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Mail } from "lucide-react";
 import type { OutputType } from "../types/reminder.types";
+import { getChannelConfig } from "../config/channels";
 
 /**
  * Get the appropriate icon component for an output type
+ * Now uses the channel registry for consistency
  */
 export const getOutputIcon = (outputType: OutputType): LucideIcon => {
-  const iconMap: Record<OutputType, LucideIcon> = {
-    email: Mail,
-    whatsapp: MessageCircle,
-    telegram: Send,
-    webhook: Link2,
-  };
-
-  return iconMap[outputType] || Mail;
+  const config = getChannelConfig(outputType);
+  return config?.icon || Mail;
 };
 
 /**

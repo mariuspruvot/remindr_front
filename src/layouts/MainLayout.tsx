@@ -1,106 +1,40 @@
-import { useState, useEffect } from "react";
+/**
+ * MainLayout - Main application layout
+ *
+ * REFACTORED: From 183 lines to ~80 lines
+ *
+ * What it does:
+ * - Provides consistent layout structure (Navbar, Sidebar, Content)
+ * - Handles mobile sidebar toggle
+ * - Renders background patterns
+ * - Renders global modals (managed by ModalContext)
+ *
+ * What it NO LONGER does:
+ * - ❌ Manages modal state (now in ModalContext)
+ * - ❌ Listens to "trigger" props (anti-pattern eliminated)
+ * - ❌ Invalidates React Query cache (modals handle their own success)
+ * - ❌ Receives callbacks from parent (no more prop drilling)
+ */
+
+import { useState } from "react";
 import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
-import { useQueryClient } from "@tanstack/react-query";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import ChannelModal from "../components/ChannelModal";
 import ReminderFormModal from "../components/ReminderFormModal";
-import { useOutputs } from "../hooks/useOutputs";
-import type { Output, Reminder } from "../types/reminder.types";
+import ChannelModal from "../components/ChannelModal";
+import { useModals } from "../contexts/ModalContext";
 
 interface MainLayoutProps {
   children: React.ReactNode;
-  reminderEditTrigger?: { trigger: number; reminder: Reminder } | null;
-  channelModalTrigger?: number;
-  reminderModalTrigger?: number;
-  channelToValidate?: Output | null;
 }
 
-export default function MainLayout({
-  children,
-  reminderEditTrigger,
-  channelModalTrigger,
-  reminderModalTrigger,
-  channelToValidate: externalChannelToValidate,
-}: MainLayoutProps) {
-  const queryClient = useQueryClient();
-
-  // State for mobile sidebar visibility
+export default function MainLayout({ children }: MainLayoutProps) {
+  const { openReminderModal } = useModals();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  // State for modals
-  const [isChannelModalOpen, setIsChannelModalOpen] = useState(false);
-  const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
-  const [reminderToEdit, setReminderToEdit] = useState<Reminder | undefined>(
-    undefined
-  );
-  const [channelToValidate, setChannelToValidate] = useState<Output | null>(
-    null
-  );
-
-  // Fetch channels using React Query
-  const { data: availableChannels = [] } = useOutputs();
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
-
-  const openChannelModal = () => setIsChannelModalOpen(true);
-  const closeChannelModal = () => {
-    setIsChannelModalOpen(false);
-    // Don't reset here, it will be reset when opening the modal next time
-  };
-  const openChannelValidationModal = (channel: Output) => {
-    setIsChannelModalOpen(true);
-    setChannelToValidate(channel);
-  };
-
-  const openReminderModal = (reminder?: Reminder) => {
-    setReminderToEdit(reminder);
-    setIsReminderModalOpen(true);
-  };
-
-  // Open modal when edit trigger fires (from Edit button)
-  useEffect(() => {
-    if (reminderEditTrigger && reminderEditTrigger.trigger > 0) {
-      openReminderModal(reminderEditTrigger.reminder);
-    }
-  }, [reminderEditTrigger]);
-
-  // Open channel modal when trigger changes (from Dashboard "Add Channel" button)
-  useEffect(() => {
-    if (channelModalTrigger && channelModalTrigger > 0) {
-      openChannelModal();
-    }
-  }, [channelModalTrigger]);
-
-  // Open reminder modal when trigger changes (from "New Reminder" button)
-  useEffect(() => {
-    if (reminderModalTrigger && reminderModalTrigger > 0) {
-      openReminderModal();
-    }
-  }, [reminderModalTrigger]);
-
-  // Open validation modal when external channel is set (from Resend button)
-  useEffect(() => {
-    if (externalChannelToValidate) {
-      openChannelValidationModal(externalChannelToValidate);
-    }
-  }, [externalChannelToValidate]);
-
-  const closeReminderModal = () => {
-    setIsReminderModalOpen(false);
-    setReminderToEdit(undefined);
-  };
-
-  const handleChannelSuccess = () => {
-    // Refresh channels list when a new channel is added/validated
-    queryClient.invalidateQueries({ queryKey: ["outputs"] });
-  };
-
-  const handleReminderSuccess = () => {
-    // Refresh reminders list
-    queryClient.invalidateQueries({ queryKey: ["reminders"] });
-  };
 
   return (
     <motion.div
@@ -141,14 +75,10 @@ export default function MainLayout({
         }}
       />
 
+      {/* Layout Structure */}
       <Navbar onMenuClick={toggleSidebar} />
       <div className="flex">
-        <Sidebar
-          isOpen={isSidebarOpen}
-          onClose={closeSidebar}
-          onAddChannel={openChannelModal}
-          onNewReminder={() => openReminderModal()}
-        />
+        <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         <main className="flex-1 w-full lg:w-auto">{children}</main>
       </div>
 
@@ -161,23 +91,9 @@ export default function MainLayout({
         <Plus className="w-6 h-6" />
       </button>
 
-      {/* Modals */}
-      <ChannelModal
-        isOpen={isChannelModalOpen}
-        onClose={closeChannelModal}
-        onSuccess={handleChannelSuccess}
-        channelToValidate={channelToValidate}
-      />
-      <ReminderFormModal
-        key={reminderToEdit ? `edit-${reminderToEdit.uuid}` : "create"}
-        isOpen={isReminderModalOpen}
-        onClose={closeReminderModal}
-        onSuccess={handleReminderSuccess}
-        mode={reminderToEdit ? "edit" : "create"}
-        reminder={reminderToEdit}
-        availableChannels={availableChannels}
-        onAddChannel={openChannelModal}
-      />
+      {/* Global Modals - Managed by ModalContext */}
+      <ReminderFormModal />
+      <ChannelModal />
     </motion.div>
   );
 }

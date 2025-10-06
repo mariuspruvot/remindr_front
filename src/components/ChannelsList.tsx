@@ -20,7 +20,7 @@ function ChannelsList({
 }: ChannelsListProps) {
   if (channels.length === 0) {
     return (
-      <div className="border border-base-300 rounded-xl p-12 bg-base-100 text-center">
+      <div className="border border-base-300 rounded-xl p-12 bg-base-100 shadow-lg text-center">
         <p className="text-base-content/60 mb-1">No channels yet</p>
         <p className="text-sm text-base-content/40">
           Add a channel to start sending reminders
@@ -30,7 +30,7 @@ function ChannelsList({
   }
 
   return (
-    <div className="border border-base-300 rounded-xl bg-base-100 divide-y divide-base-300">
+    <div className="border border-base-300 rounded-xl bg-base-100 shadow-lg divide-y divide-base-300">
       {channels.map((channel) => {
         const Icon = getOutputIcon(channel.output_type);
         return (

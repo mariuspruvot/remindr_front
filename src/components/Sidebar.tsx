@@ -1,20 +1,24 @@
+/**
+ * Sidebar - Navigation and quick actions
+ *
+ * REFACTORED: Uses ModalContext instead of prop callbacks
+ *
+ * Before: Received onAddChannel and onNewReminder callbacks from parent
+ * After: Directly calls useModals() - no prop drilling needed
+ */
+
 import { LayoutDashboard, Bell, Radio, Settings, Plus, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { useModals } from "../contexts/ModalContext";
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddChannel: () => void;
-  onNewReminder: () => void;
 }
 
-function Sidebar({
-  isOpen,
-  onClose,
-  onAddChannel,
-  onNewReminder,
-}: SidebarProps) {
+function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
+  const { openReminderModal, openChannelModal } = useModals();
 
   const menuItems = [
     {
@@ -27,6 +31,16 @@ function Sidebar({
     { id: "channels", label: "Channels", Icon: Radio, path: "/channels" },
     { id: "settings", label: "Settings", Icon: Settings, path: "/settings" },
   ];
+
+  const handleNewReminder = () => {
+    openReminderModal();
+    onClose();
+  };
+
+  const handleAddChannel = () => {
+    openChannelModal();
+    onClose();
+  };
 
   return (
     <>
@@ -56,16 +70,6 @@ function Sidebar({
       >
         {/* Background pattern wrapper */}
         <div className="relative h-full p-4">
-          {/* Background pattern - matches Landing/MainLayout */}
-          <div
-            className="absolute inset-0 pointer-events-none opacity-60"
-            style={{
-              backgroundImage:
-                "radial-gradient(color-mix(in srgb, currentColor 20%, transparent) 1px, transparent 1px)",
-              backgroundSize: "24px 24px",
-              color: "hsl(var(--bc))",
-            }}
-          />
           <div
             className="absolute inset-0 pointer-events-none opacity-[0.015]"
             style={{
@@ -89,22 +93,16 @@ function Sidebar({
           <div className="flex flex-col gap-2 mb-6 relative z-10">
             {/* New Reminder - Desktop only (mobile has FAB) */}
             <button
-              onClick={() => {
-                onNewReminder();
-                onClose(); // Close sidebar after click
-              }}
-              className="hidden lg:flex btn btn-sm w-full gap-2 bg-base-content text-base-100 hover:bg-base-content/90 border-none"
+              onClick={handleNewReminder}
+              className="hidden lg:flex btn btn-sm shadow-lg hover:shadow-xl w-full gap-2 bg-base-content text-base-100 hover:bg-base-content/90 border-none"
             >
               <Plus className="w-4 h-4" />
               New Reminder
             </button>
             {/* Add Channel - Available on all screens */}
             <button
-              onClick={() => {
-                onAddChannel();
-                onClose(); // Close sidebar after click on mobile
-              }}
-              className="btn btn-sm btn-outline w-full gap-2"
+              onClick={handleAddChannel}
+              className="btn btn-sm shadow-lg hover:shadow-xl btn-outline w-full gap-2"
             >
               <Radio className="w-4 h-4" />
               Add Channel
@@ -121,9 +119,9 @@ function Sidebar({
                   key={item.id}
                   to={item.path}
                   onClick={onClose}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                     isActive
-                      ? "bg-base-200 text-base-content"
+                      ? "bg-base-200 text-base-content shadow-lg"
                       : "text-base-content/60 hover:bg-base-200/50 hover:text-base-content"
                   }`}
                 >

@@ -1,20 +1,25 @@
-import { Bell, Clock, Send, Radio, ArrowRight, Loader2 } from "lucide-react";
+/**
+ * Dashboard Page - Overview of reminders and channels
+ * 
+ * REFACTORED:
+ * - Uses useModals() instead of prop callbacks (no prop drilling)
+ * - Uses PageHeader, LoadingState, ErrorState components (DRY)
+ * - Cleaner, more readable code
+ */
+
+import { Bell, Clock, Send, Radio, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { PageHeader, LoadingState } from "../components/common";
 import StatsCard from "../components/StatsCard";
 import ReminderTable from "../components/ReminderTable";
 import ChannelsList from "../components/ChannelsList";
 import { useReminders, useDeleteReminder } from "../hooks/useReminders";
 import { useOutputs, useDeleteOutput } from "../hooks/useOutputs";
-import type { Reminder, Output } from "../types/reminder.types";
+import { useModals } from "../contexts/ModalContext";
 
-interface DashboardProps {
-  onEditReminder: (reminder: Reminder) => void;
-  onNewReminder: () => void;
-  onAddChannel: () => void;
-  onResendVerification: (channel: Output) => void;
-}
-
-function Dashboard({ onEditReminder, onResendVerification }: DashboardProps) {
+function Dashboard() {
+  const { openReminderModal, openChannelModal } = useModals();
+  
   // Fetch data using React Query hooks
   const { data: reminders = [], isLoading: remindersLoading } = useReminders();
   const { data: channels = [], isLoading: channelsLoading } = useOutputs();
@@ -36,17 +41,13 @@ function Dashboard({ onEditReminder, onResendVerification }: DashboardProps) {
   const pendingReminders = reminders.filter((r) => !r.sent).length;
   const sentReminders = reminders.filter((r) => r.sent).length;
   const activeChannels = channels.filter((c) => c.confirmed).length;
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
-      {/* Page Header */}
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-base-content mb-1 sm:mb-2">
-          Dashboard
-        </h1>
-        <p className="text-sm sm:text-base text-base-content/60">
-          Manage your reminders and channels
-        </p>
-      </div>
+      <PageHeader
+        title="Dashboard"
+        subtitle="Manage your reminders and channels"
+      />
 
       {/* Stats Cards - Responsive Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
@@ -95,18 +96,12 @@ function Dashboard({ onEditReminder, onResendVerification }: DashboardProps) {
           </Link>
         </div>
 
-        {/* Loading State */}
-        {remindersLoading && (
-          <div className="flex items-center justify-center py-12 border border-base-300 rounded-xl">
-            <Loader2 className="w-6 h-6 animate-spin text-primary" />
-          </div>
-        )}
-
-        {/* Reminders Table */}
-        {!remindersLoading && (
+        {remindersLoading ? (
+          <LoadingState />
+        ) : (
           <ReminderTable
             reminders={reminders.slice(0, 5)}
-            onEdit={onEditReminder}
+            onEdit={openReminderModal}
             onDelete={handleDeleteReminder}
           />
         )}
@@ -127,19 +122,13 @@ function Dashboard({ onEditReminder, onResendVerification }: DashboardProps) {
           </Link>
         </div>
 
-        {/* Loading State */}
-        {channelsLoading && (
-          <div className="flex items-center justify-center py-12 border border-base-300 rounded-xl">
-            <Loader2 className="w-6 h-6 animate-spin text-primary" />
-          </div>
-        )}
-
-        {/* Channels List */}
-        {!channelsLoading && (
+        {channelsLoading ? (
+          <LoadingState />
+        ) : (
           <ChannelsList
             channels={channels.slice(0, 3)}
             onDelete={handleDeleteChannel}
-            onResendVerification={onResendVerification}
+            onResendVerification={(channel) => openChannelModal(channel)}
           />
         )}
       </div>

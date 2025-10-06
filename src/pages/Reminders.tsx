@@ -1,19 +1,20 @@
 /**
- * Reminders page - Full list view
- * Shows all reminders with filtering and actions
+ * Reminders Page - Full list view
+ *
+ * REFACTORED:
+ * - Uses useModals() instead of prop callbacks
+ * - Uses PageHeader, LoadingState, ErrorState components
+ * - Much cleaner code structure
  */
 
-import { Plus, Loader2 } from "lucide-react";
+import { Plus } from "lucide-react";
+import { PageHeader, LoadingState, ErrorState } from "../components/common";
 import ReminderTable from "../components/ReminderTable";
 import { useReminders, useDeleteReminder } from "../hooks/useReminders";
-import type { Reminder } from "../types/reminder.types";
+import { useModals } from "../contexts/ModalContext";
 
-interface RemindersPageProps {
-  onEditReminder: (reminder: Reminder) => void;
-  onNewReminder: () => void;
-}
-
-function RemindersPage({ onEditReminder, onNewReminder }: RemindersPageProps) {
+function RemindersPage() {
+  const { openReminderModal } = useModals();
   const { data: reminders, isLoading, error } = useReminders();
   const deleteReminder = useDeleteReminder();
 
@@ -25,41 +26,33 @@ function RemindersPage({ onEditReminder, onNewReminder }: RemindersPageProps) {
 
   return (
     <div className="p-6 lg:p-8 max-w-7xl mx-auto">
-      {/* Page Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-semibold text-base-content mb-2">
-            All Reminders
-          </h1>
-          <p className="text-base-content/60">
-            {reminders?.length || 0} total reminders
-          </p>
-        </div>
-        <button onClick={onNewReminder} className="btn btn-primary gap-2">
-          <Plus className="w-5 h-5" />
-          New Reminder
-        </button>
-      </div>
+      <PageHeader
+        title="All Reminders"
+        subtitle={`${reminders?.length || 0} total reminders`}
+        action={
+          <button
+            onClick={() => openReminderModal()}
+            className="btn btn-primary shadow-xl hover:shadow-2xl gap-2"
+          >
+            <Plus className="w-5 h-5" />
+            New Reminder
+          </button>
+        }
+      />
 
       {/* Loading State */}
-      {isLoading && (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      )}
+      {isLoading && <LoadingState size="lg" />}
 
       {/* Error State */}
       {error && (
-        <div className="alert alert-error">
-          <span>Failed to load reminders. Please try again.</span>
-        </div>
+        <ErrorState message="Failed to load reminders. Please try again." />
       )}
 
       {/* Reminders Table */}
       {reminders && (
         <ReminderTable
           reminders={reminders}
-          onEdit={onEditReminder}
+          onEdit={openReminderModal}
           onDelete={handleDelete}
         />
       )}

@@ -5,22 +5,40 @@
 ```
 src/
 ├── components/          # React components
-│   ├── common/         # Reusable UI components (Modal, Forms)
-│   ├── ChannelModal.tsx
+│   ├── common/         # Reusable UI components
+│   │   ├── Modal.tsx          # Generic modal wrapper
+│   │   ├── PageHeader.tsx     # Page header component
+│   │   ├── LoadingState.tsx   # Loading spinner
+│   │   ├── ErrorState.tsx     # Error display
+│   │   └── FormField.tsx      # Form input components
+│   ├── reminder/       # Reminder-specific components
+│   │   ├── QuickScheduleButtons.tsx
+│   │   └── ChannelSelector.tsx
+│   ├── ChannelModal.tsx       # Channel creation/validation modal
 │   ├── ChannelsList.tsx
 │   ├── Navbar.tsx
 │   ├── OutputChannels.tsx
-│   ├── ReminderFormModal.tsx
+│   ├── ProtectedRoute.tsx     # Auth wrapper for routes
+│   ├── ReminderFormModal.tsx  # Reminder creation/edit modal
 │   ├── ReminderTable.tsx
 │   ├── Sidebar.tsx
 │   ├── StatsCard.tsx
 │   └── StatusBadge.tsx
+├── config/             # App configuration
+│   └── themes.ts
 ├── constants/          # Application constants
 │   ├── animations.ts   # Framer Motion variants
-│   └── index.ts        # General constants
-├── hooks/              # React Query hooks
-│   ├── useOutputs.ts   # Channel/Output operations
-│   └── useReminders.ts # Reminder operations
+│   ├── time.ts
+│   └── index.ts
+├── contexts/           # React Context providers
+│   ├── ModalContext.tsx  # Global modal state management
+│   └── index.ts
+├── hooks/              # Custom React hooks
+│   ├── useChannelForm.ts   # Channel form logic
+│   ├── useOutputs.ts       # Channel/Output operations (React Query)
+│   ├── useReminderForm.ts  # Reminder form logic
+│   ├── useReminders.ts     # Reminder operations (React Query)
+│   └── useTheme.ts
 ├── layouts/            # Page layouts
 │   └── MainLayout.tsx  # Main app layout with nav/sidebar
 ├── lib/                # External library configurations
@@ -35,8 +53,10 @@ src/
 ├── types/              # TypeScript type definitions
 │   └── reminder.types.ts
 ├── utils/              # Utility functions
-│   ├── reminder-helpers.ts  # Formatting & display helpers
-│   └── toast.tsx       # Toast notification utility
+│   ├── dateHelpers.ts
+│   ├── errorHandler.ts
+│   ├── reminder-helpers.ts
+│   └── toast.tsx
 ├── App.tsx             # Main app with routing
 ├── main.tsx            # App entry point
 └── index.css           # Global styles
@@ -50,6 +70,7 @@ src/
 
 - **Components**: UI rendering only
 - **Hooks**: Data fetching & state management
+- **Contexts**: Global state (modals, theme)
 - **Utils**: Pure functions for transformations
 - **Constants**: Centralized configuration
 
@@ -59,12 +80,16 @@ src/
 - Shared animations in `constants/animations.ts`
 - Centralized constants in `constants/index.ts`
 - Type definitions in one place
+- **ModalContext** eliminates modal state duplication
+- **ProtectedRoute** eliminates auth wrapper duplication
 
 ### **3. KISS (Keep It Simple, Stupid)**
 
 - Components do one thing well
 - Clear naming conventions
 - No over-engineering
+- **No "trigger" anti-patterns** (eliminated in refactoring)
+- **No excessive prop drilling** (use Context when appropriate)
 
 ### **4. Clean Code**
 
@@ -72,20 +97,23 @@ src/
 - TypeScript strict mode
 - Descriptive variable names
 - Comments for complex logic
+- Maximum file size: ~200 lines (refactored when larger)
 
 ---
 
 ## 🔄 Data Flow
 
+### **API Data Flow**
+
 ```
 ┌─────────────┐
-│   Pages     │  ← Route components, orchestrate everything
+│   Pages     │  ← Smart components: orchestrate data & UI
 └──────┬──────┘
        │
        ▼
 ┌─────────────┐
-│   Hooks     │  ← React Query (API calls, caching, state)
-│ (useReminders│
+│   Hooks     │  ← React Query hooks (API calls, caching, state)
+│ (useReminders
 │  useOutputs) │
 └──────┬──────┘
        │
@@ -101,6 +129,39 @@ src/
 └─────────────┘
 ```
 
+### **Modal State Flow**
+
+```
+┌──────────────────┐
+│  ModalContext    │  ← Single source of truth for modal state
+│  (Context API)   │
+└────────┬─────────┘
+         │
+    ┌────┴────┐
+    │         │
+    ▼         ▼
+┌────────┐ ┌────────────┐
+│ Sidebar│ │   Pages    │  ← Any component can open modals
+│ (open) │ │   (open)   │
+└────────┘ └────────────┘
+    │         │
+    └────┬────┘
+         │
+         ▼
+┌──────────────────┐
+│  Modal Components│  ← Listen to context, render when open
+│ (ReminderModal,  │
+│  ChannelModal)   │
+└──────────────────┘
+```
+
+**Key Benefits:**
+
+- ✅ No prop drilling (no passing callbacks through 3+ levels)
+- ✅ No "trigger" anti-pattern (no counters to trigger actions)
+- ✅ Any component can open/close modals directly
+- ✅ Single source of truth for modal state
+
 ---
 
 ## 🎨 Component Patterns
@@ -108,13 +169,15 @@ src/
 ### **Smart Components** (Pages)
 
 - Handle data fetching
-- Manage state
+- Manage local state
 - Pass data to dumb components
 
 ```tsx
 // Example: pages/Dashboard.tsx
 function Dashboard() {
   const { data: reminders } = useReminders(); // ← Fetch data
+  const { openReminderModal } = useModals(); // ← Get modal actions
+
   return <ReminderTable reminders={reminders} />; // ← Pass to dumb component
 }
 ```
@@ -124,6 +187,7 @@ function Dashboard() {
 - Receive props
 - Render UI
 - No data fetching
+- Minimal state (UI-only)
 
 ```tsx
 // Example: components/ReminderTable.tsx
@@ -145,9 +209,26 @@ function ReminderTable({ reminders }: { reminders: Reminder[] }) {
 </Modal>
 ```
 
+### **Layout Components**
+
+- Provide consistent structure
+- Handle responsive behavior
+- Manage global UI elements
+
+```tsx
+// Example: components/common/PageHeader.tsx
+<PageHeader
+  title="Reminders"
+  subtitle="Manage your reminders"
+  action={<button>New</button>}
+/>
+```
+
 ---
 
 ## 🪝 Hooks Pattern
+
+### **Data Hooks** (React Query)
 
 All API operations use React Query hooks:
 
@@ -180,6 +261,54 @@ export const useCreateReminder = () => {
 - ✅ Auto-refresh on mutations
 - ✅ Loading & error states
 - ✅ Retry logic
+
+### **Form Hooks** (Business Logic)
+
+Separate form logic from UI rendering:
+
+```tsx
+// hooks/useReminderForm.ts
+export const useReminderForm = ({ mode, reminder, onSuccess }) => {
+  const [reminderText, setReminderText] = useState("");
+  const [scheduledAt, setScheduledAt] = useState("");
+  // ... all form state and validation logic
+
+  const handleSubmit = async (e) => {
+    // ... submission logic
+  };
+
+  return { reminderText, setReminderText, handleSubmit, ... };
+};
+```
+
+**Benefits:**
+
+- ✅ Testable without rendering UI
+- ✅ Reusable across different forms
+- ✅ Keeps components focused on rendering
+
+### **Context Hooks** (Global State)
+
+Access global state without prop drilling:
+
+```tsx
+// contexts/ModalContext.tsx
+export const useModals = () => {
+  const context = useContext(ModalContext);
+  return {
+    openReminderModal: (reminder) => ...,
+    closeReminderModal: () => ...,
+    openChannelModal: (channel) => ...,
+    closeChannelModal: () => ...,
+  };
+};
+```
+
+**Benefits:**
+
+- ✅ No prop drilling
+- ✅ Accessible from any component
+- ✅ Type-safe with TypeScript
 
 ---
 
@@ -214,6 +343,20 @@ User → Clerk (modal) → JWT token → Axios interceptor → Backend
 3. Axios interceptor adds token to all requests
 4. Django verifies token with Clerk
 
+**Route Protection:**
+
+```tsx
+// Using ProtectedRoute wrapper
+<Route
+  path="/dashboard"
+  element={
+    <ProtectedRoute>
+      <Dashboard />
+    </ProtectedRoute>
+  }
+/>
+```
+
 ---
 
 ## 📝 Naming Conventions
@@ -223,6 +366,7 @@ User → Clerk (modal) → JWT token → Axios interceptor → Backend
 - Components: `PascalCase.tsx` (e.g., `ReminderTable.tsx`)
 - Hooks: `camelCase.ts` with `use` prefix (e.g., `useReminders.ts`)
 - Utils: `kebab-case.ts` (e.g., `reminder-helpers.ts`)
+- Contexts: `PascalCase.tsx` with `Context` suffix (e.g., `ModalContext.tsx`)
 
 ### **Variables**
 
@@ -238,17 +382,6 @@ User → Clerk (modal) → JWT token → Axios interceptor → Backend
 
 ---
 
-## 🧪 Testing Strategy (To Implement)
-
-```
-tests/
-├── components/      # Component tests (Vitest + React Testing Library)
-├── hooks/           # Hook tests (React Hooks Testing Library)
-└── utils/           # Pure function tests (Vitest)
-```
-
----
-
 ## 🚀 Performance Optimization
 
 ### **React Query**
@@ -260,13 +393,14 @@ tests/
 ### **Code Splitting**
 
 - Lazy load routes
-- Dynamic imports for modals
+- Dynamic imports for modals (if needed)
 
 ### **Optimizations Applied**
 
 - ✅ Framer Motion animations optimized
 - ✅ React Query caching
-- ✅ Memoized expensive calculations (if needed)
+- ✅ Memoized expensive calculations (when needed)
+- ✅ Eliminated unnecessary re-renders (Context usage)
 
 ---
 
@@ -293,20 +427,61 @@ tests/
 ### **1. New Page**
 
 1. Create file in `pages/`
-2. Add route in `App.tsx`
+2. Add route in `App.tsx` with `<ProtectedRoute>`
 3. Add link in `Sidebar.tsx`
 
-### **2. New API Endpoint**
+```tsx
+// App.tsx
+<Route
+  path="/new-page"
+  element={
+    <ProtectedRoute>
+      <NewPage />
+    </ProtectedRoute>
+  }
+/>
+```
+
+### **2. New Modal**
+
+1. Add modal state to `ModalContext.tsx`
+2. Create modal component using `<Modal>` wrapper
+3. Render modal in `MainLayout.tsx`
+4. Use `useModals()` to open/close from any component
+
+```tsx
+// contexts/ModalContext.tsx
+const { openNewModal, closeNewModal } = useModals();
+
+// Any component
+<button onClick={() => openNewModal()}>Open</button>;
+```
+
+### **3. New API Endpoint**
 
 1. Add types in `types/reminder.types.ts`
-2. Create hook in `hooks/`
+2. Create hook in `hooks/` using React Query
 3. Use hook in page/component
 
-### **3. New Component**
+```tsx
+// hooks/useNewFeature.ts
+export const useNewFeature = () => {
+  return useQuery({
+    queryKey: ["newFeature"],
+    queryFn: async () => {
+      const { data } = await api.get("/new-feature/");
+      return data;
+    },
+  });
+};
+```
 
-1. Create in appropriate folder
-2. Export from `index.ts` if common
+### **4. New Reusable Component**
+
+1. Create in `components/common/`
+2. Export from `components/common/index.ts`
 3. Add JSDoc comments
+4. Keep it generic and configurable
 
 ---
 
@@ -319,6 +494,10 @@ tests/
 - Extract reusable logic into hooks/utils
 - Use constants instead of magic values
 - Add comments for complex logic
+- Use Context for global state (modals, theme)
+- Use ProtectedRoute for authenticated routes
+- Keep components under 200 lines
+- Use generic Modal component for consistency
 
 ❌ **DON'T**
 
@@ -327,6 +506,61 @@ tests/
 - Use `any` type in TypeScript
 - Put business logic in components
 - Hardcode URLs, strings, numbers
+- Pass callbacks through 3+ levels (use Context)
+- Use "trigger" counters to open modals
+- Create custom modals without using `<Modal>` wrapper
+
+---
+
+## 🔄 Recent Refactoring (December 2024)
+
+### **Major Changes:**
+
+1. **Modal System Refactored**
+
+   - ✅ Created `ModalContext` for centralized modal state
+   - ✅ Eliminated "trigger" anti-pattern (no more counters)
+   - ✅ Eliminated prop drilling (4 levels → direct access)
+   - ✅ All modals use generic `<Modal>` component
+
+2. **Route Protection Simplified**
+
+   - ✅ Created `ProtectedRoute` component
+   - ✅ Eliminated 160 lines of duplicated code
+   - ✅ DRY principle applied to routing
+
+3. **Common Components Extracted**
+
+   - ✅ `PageHeader` for consistent page headers
+   - ✅ `LoadingState` for consistent loading UI
+   - ✅ `ErrorState` for consistent error display
+
+4. **App.tsx Simplified**
+   - ✅ 183 lines → 60 lines (67% reduction)
+   - ✅ No more trigger state management
+   - ✅ No more callback prop drilling
+
+### **Code Quality Improvements:**
+
+- 🎯 **Lines of Code Reduced:** ~500 lines removed
+- 🎯 **Files Refactored:** 10+ files simplified
+- 🎯 **New Patterns:** Context API, ProtectedRoute
+- 🎯 **Code Duplication:** Significantly reduced
+
+---
+
+## 📚 Learning Resources
+
+For developers new to React:
+
+- **Hooks**: Reusable functions that manage state/side-effects
+- **Context**: Global state without prop drilling
+- **React Query**: Server state management (caching, refetching)
+- **Custom Hooks**: Extract business logic from components
+
+**Key Concept:**
+
+> "A component should focus on rendering UI. Business logic, data fetching, and state management belong in hooks."
 
 ---
 

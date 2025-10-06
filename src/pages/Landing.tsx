@@ -6,8 +6,10 @@
 import { motion } from "framer-motion";
 import { SignInButton, SignUpButton, useUser } from "@clerk/clerk-react";
 import { ArrowRight, Bell, Zap, Shield, Moon, Sun } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme";
+import { useEffect } from "react";
+import { LoadingSpinner } from "../components/common";
 
 // Subtle animation variants
 const fadeIn = {
@@ -25,8 +27,21 @@ const stagger = {
 };
 
 function Landing() {
-  const { isSignedIn } = useUser();
+  const { isSignedIn, isLoaded } = useUser();
   const { isDark, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+
+  // Redirect to dashboard if user is already signed in
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      navigate("/dashboard");
+    }
+  }, [isLoaded, isSignedIn, navigate]);
+
+  // Show loader while checking auth or if already signed in (redirecting)
+  if (!isLoaded || isSignedIn) {
+    return <LoadingSpinner fullScreen />;
+  }
 
   return (
     <motion.div
