@@ -33,7 +33,7 @@ function ChannelsPage() {
         action={
           <button
             onClick={() => openChannelModal()}
-            className="btn btn-primary shadow-xl hover:shadow-2xl gap-2"
+            className="btn bg-base-300 rounded-lg border-none hover:bg-neutral/30 shadow-xl hover:shadow-2xl gap-2"
           >
             <Plus className="w-5 h-5" />
             Add Channel
@@ -42,7 +42,7 @@ function ChannelsPage() {
       />
 
       {/* Info Banner */}
-      <div className="alert mb-6">
+      <div className="alert mb-6 shadow-md bg-base-200/60">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

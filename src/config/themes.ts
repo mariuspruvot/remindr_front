@@ -4,7 +4,7 @@
  */
 
 export const THEMES = {
-  light: "emerald", // Your light theme from @plugin "daisyui"
+  light: "pastel", // Your light theme from @plugin "daisyui"
   dark: "dark", // Your dark theme from @plugin "daisyui"
 } as const;
 

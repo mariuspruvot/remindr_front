@@ -1,13 +1,13 @@
 /**
  * Dashboard Page - Overview of reminders and channels
- * 
+ *
  * REFACTORED:
  * - Uses useModals() instead of prop callbacks (no prop drilling)
  * - Uses PageHeader, LoadingState, ErrorState components (DRY)
  * - Cleaner, more readable code
  */
 
-import { Bell, Clock, Send, Radio, ArrowRight } from "lucide-react";
+import { Bell, Clock, Send, Radio, ArrowRight, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PageHeader, LoadingState } from "../components/common";
 import StatsCard from "../components/StatsCard";
@@ -19,7 +19,7 @@ import { useModals } from "../contexts/ModalContext";
 
 function Dashboard() {
   const { openReminderModal, openChannelModal } = useModals();
-  
+
   // Fetch data using React Query hooks
   const { data: reminders = [], isLoading: remindersLoading } = useReminders();
   const { data: channels = [], isLoading: channelsLoading } = useOutputs();
@@ -30,6 +30,14 @@ function Dashboard() {
     if (window.confirm("Are you sure you want to delete this reminder?")) {
       await deleteReminder.mutateAsync(reminderId);
     }
+  };
+
+  const handleNewReminder = () => {
+    openReminderModal();
+  };
+
+  const handleAddChannel = () => {
+    openChannelModal();
   };
 
   const handleDeleteChannel = async (channelId: string) => {
@@ -84,9 +92,13 @@ function Dashboard() {
       {/* Recent Reminders Section */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-xl lg:text-2xl font-semibold text-base-content">
-            Recent Reminders
-          </h2>
+          <button
+            onClick={handleNewReminder}
+            className="hidden lg:flex btn btn-sm shadow-xl rounded-lg bg-base-300 hover:bg-neutral/50 hover:shadow-2xl w-40 gap-2 border-none"
+          >
+            <Plus className="w-4 h-4" />
+            New Reminder
+          </button>
           <Link
             to="/reminders"
             className="inline-flex items-center gap-2 text-sm font-medium text-base-content/60 hover:text-base-content transition-colors"
@@ -110,9 +122,13 @@ function Dashboard() {
       {/* Channel Management Section */}
       <div>
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-xl lg:text-2xl font-semibold text-base-content">
-            Channels
-          </h2>
+          <button
+            onClick={handleAddChannel}
+            className="btn btn-sm shadow-xl rounded-lg bg-base-300 hover:bg-neutral/50 hover:shadow-xl w-40 gap-2 border-none"
+          >
+            <Radio className="w-4 h-4 " />
+            Add Channel
+          </button>
           <Link
             to="/channels"
             className="inline-flex items-center gap-2 text-sm font-medium text-base-content/60 hover:text-base-content transition-colors"

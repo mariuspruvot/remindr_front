@@ -32,7 +32,7 @@ function RemindersPage() {
         action={
           <button
             onClick={() => openReminderModal()}
-            className="btn btn-primary shadow-xl hover:shadow-2xl gap-2"
+            className="btn bg-base-300 rounded-lg border-none hover:bg-neutral/30 shadow-xl hover:shadow-xl gap-2"
           >
             <Plus className="w-5 h-5" />
             New Reminder

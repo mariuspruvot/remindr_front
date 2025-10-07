@@ -49,19 +49,12 @@ function ChannelsList({
                     {channel.output_type}
                   </p>
                   {channel.confirmed ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
-                      <Check className="w-3 h-3" />
+                    <span className="badge badge-accent badge-xs opacity-80">
                       Verified
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400">
-                      <X className="w-3 h-3" />
+                    <span className="badge badge-secondary badge-xs opacity-80">
                       Pending
-                    </span>
-                  )}
-                  {channel.primary && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-primary/10 text-primary">
-                      Primary
                     </span>
                   )}
                 </div>

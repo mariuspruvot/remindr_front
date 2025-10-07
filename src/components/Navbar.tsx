@@ -11,15 +11,7 @@ function Navbar({ onMenuClick }: NavbarProps) {
   const { isDark, toggleTheme } = useTheme();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-base-300 bg-base-100">
-      {/* Background pattern - matches Landing/MainLayout */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.015]"
-        style={{
-          filter: "url(#noise)",
-        }}
-      />
-
+    <header className="sticky top-0 z-50 border-b border-base-200 bg-base-200 shadow-xl">
       <div className="flex items-center justify-between px-4 lg:px-6 py-4 relative z-10">
         {/* Left side: Hamburger (mobile only) + Logo */}
         <div className="flex items-center gap-3">
@@ -35,7 +27,7 @@ function Navbar({ onMenuClick }: NavbarProps) {
           {/* Logo */}
           <Link
             to="/dashboard"
-            className="text-xl font-semibold text-base-content"
+            className="text-2xl font-bold  text-base-content"
           >
             Remindr
           </Link>
@@ -43,19 +35,6 @@ function Navbar({ onMenuClick }: NavbarProps) {
 
         {/* Right side actions */}
         <div className="flex items-center gap-2 lg:gap-3">
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="btn btn-ghost btn-sm btn-circle"
-            aria-label="Toggle theme"
-          >
-            {isDark ? (
-              <Sun className="w-5 h-5" />
-            ) : (
-              <Moon className="w-5 h-5" />
-            )}
-          </button>
-
           {/* Clerk User Button with profile menu */}
           <UserButton
             afterSignOutUrl="/"
