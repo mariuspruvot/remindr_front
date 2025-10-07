@@ -3,7 +3,7 @@
  * Shows verification status and allows deletion
  */
 
-import { Check, X, Trash2, RefreshCw } from "lucide-react";
+import { Trash2, RefreshCw } from "lucide-react";
 import { getOutputIcon } from "../utils/reminder-helpers";
 import type { Output } from "../types/reminder.types";
 

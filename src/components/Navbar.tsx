@@ -1,15 +1,12 @@
-import { Menu, Moon, Sun } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 import { UserButton } from "@clerk/clerk-react";
-import { useTheme } from "../hooks/useTheme";
 
 interface NavbarProps {
   onMenuClick: () => void;
 }
 
 function Navbar({ onMenuClick }: NavbarProps) {
-  const { isDark, toggleTheme } = useTheme();
-
   return (
     <header className="sticky top-0 z-50 border-b border-base-200 bg-base-200 shadow-xl">
       <div className="flex items-center justify-between px-4 lg:px-6 py-4 relative z-10">
