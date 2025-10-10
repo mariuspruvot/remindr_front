@@ -1,134 +1,121 @@
 /**
- * Minimal Calendar Page - Clean and simple calendar view
+ * Professional Calendar Page
  *
  * Features:
- * - Minimal design with clean interface
- * - Simple month view focus
- * - Clean typography and spacing
- * - Subtle interactions
+ * - Modern monthly calendar view with interactive grid
+ * - Day details sidebar with reminders list
+ * - Create reminders directly from calendar
+ * - View and edit existing reminders
+ * - Beautiful animations and responsive design
+ * - Fully integrated with DaisyUI theme
  */
 
-import { useState, useMemo } from "react";
-import { Calendar, momentLocalizer, Views } from "react-big-calendar";
-import moment from "moment";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Calendar as CalendarIcon,
-} from "lucide-react";
-import { PageHeader } from "../components/common";
-import { useReminders } from "../hooks/useReminders";
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import { PageHeader, LoadingState } from "../components/common";
+import { CalendarGrid, DayDetailsSidebar } from "../components/calendar";
+import { useReminders, useDeleteReminder } from "../hooks/useReminders";
 import { useModals } from "../contexts/ModalContext";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-
-// Configure moment localizer
-const localizer = momentLocalizer(moment);
-
-// Minimal toolbar component
-const MinimalToolbar = ({ label, onNavigate }: any) => {
-  return (
-    <div className="flex items-center justify-between mb-6">
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => onNavigate("PREV")}
-          className="btn btn-ghost btn-sm btn-circle"
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </button>
-        <h2 className="text-lg font-medium text-base-content">{label}</h2>
-        <button
-          onClick={() => onNavigate("NEXT")}
-          className="btn btn-ghost btn-sm btn-circle"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// Minimal event component
-const MinimalEvent = ({ event }: any) => {
-  return (
-    <div className="text-xs font-medium truncate text-white">{event.title}</div>
-  );
-};
+import type { Reminder } from "../types/reminder.types";
 
 function CalendarPage() {
   const { data: reminders = [], isLoading } = useReminders();
   const { openReminderModal } = useModals();
-  const [date, setDate] = useState(new Date());
+  const deleteReminder = useDeleteReminder();
 
-  // Transform reminders into calendar events
-  const events = useMemo(() => {
-    return reminders.map((reminder) => ({
-      id: reminder.id,
-      title: reminder.title,
-      start: new Date(reminder.scheduled_for),
-      end: new Date(new Date(reminder.scheduled_for).getTime() + 30 * 60000),
-      sent: reminder.sent,
-      resource: reminder,
-    }));
-  }, [reminders]);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
 
-  // Handle event selection
-  const handleSelectEvent = (event: any) => {
-    openReminderModal(event.resource);
+  const handleCreateReminder = (date?: Date) => {
+    const scheduledDate = date || selectedDate || new Date();
+    
+    // Set time to next hour
+    scheduledDate.setHours(scheduledDate.getHours() + 1, 0, 0, 0);
+    
+    openReminderModal(undefined, scheduledDate.toISOString());
   };
 
-  // Handle date/time selection for new events
-  const handleSelectSlot = (slotInfo: any) => {
-    const newReminder = {
-      scheduled_for: slotInfo.start.toISOString(),
-    };
-    openReminderModal(newReminder);
+  const handleEditReminder = (reminder: Reminder) => {
+    openReminderModal(reminder);
+  };
+
+  const handleDeleteReminder = async (reminderId: string) => {
+    await deleteReminder.mutateAsync(reminderId);
   };
 
   if (isLoading) {
     return (
-      <div className="p-6 max-w-6xl mx-auto">
-        <PageHeader title="Calendar" subtitle="View your reminders" />
-        <div className="flex items-center justify-center h-96">
-          <div className="loading loading-spinner"></div>
-        </div>
+      <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+        <PageHeader
+          title="Calendar"
+          subtitle="Schedule and manage your reminders"
+        />
+        <LoadingState size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <PageHeader title="Calendar" subtitle="View your reminders" />
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+      <PageHeader
+        title="Calendar"
+        subtitle={`${reminders.length} ${reminders.length === 1 ? "reminder" : "reminders"} scheduled`}
+        action={
+          <button
+            onClick={() => handleCreateReminder()}
+            className="btn btn-primary gap-2 shadow-lg hover:shadow-xl transition-all"
+          >
+            <Plus className="w-5 h-5" />
+            <span className="hidden sm:inline">New Reminder</span>
+          </button>
+        }
+      />
 
-      <div className="card-elevated p-6">
-        <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: "600px" }}
-          view={Views.MONTH}
-          date={date}
-          onNavigate={setDate}
-          onSelectEvent={handleSelectEvent}
-          onSelectSlot={handleSelectSlot}
-          selectable
-          components={{
-            toolbar: MinimalToolbar,
-            event: MinimalEvent,
-          }}
-          eventPropGetter={(event) => ({
-            style: {
-              backgroundColor: event.sent ? "#059669" : "#2563eb",
-              borderRadius: "4px",
-              border: "none",
-              color: "white",
-              fontSize: "12px",
-              padding: "2px 6px",
-            },
-          })}
-          className="minimal-calendar"
-        />
+      {/* Calendar Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Calendar Grid */}
+        <div className="lg:col-span-2">
+          <CalendarGrid
+            currentDate={currentDate}
+            onDateChange={setCurrentDate}
+            selectedDate={selectedDate}
+            onDateSelect={setSelectedDate}
+            reminders={reminders}
+          />
+        </div>
+
+        {/* Day Details Sidebar */}
+        <div className="lg:col-span-1 hidden lg:block">
+          {selectedDate && (
+            <div className="sticky top-6">
+              <DayDetailsSidebar
+                selectedDate={selectedDate}
+                reminders={reminders}
+                onClose={() => setSelectedDate(null)}
+                onCreateReminder={handleCreateReminder}
+                onEditReminder={handleEditReminder}
+                onDeleteReminder={handleDeleteReminder}
+              />
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Mobile Day Details - Show as modal on small screens */}
+      {selectedDate && (
+        <div className="lg:hidden fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
+          <div className="w-full max-w-lg max-h-[80vh] overflow-hidden">
+            <DayDetailsSidebar
+              selectedDate={selectedDate}
+              reminders={reminders}
+              onClose={() => setSelectedDate(null)}
+              onCreateReminder={handleCreateReminder}
+              onEditReminder={handleEditReminder}
+              onDeleteReminder={handleDeleteReminder}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

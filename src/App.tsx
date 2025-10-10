@@ -21,6 +21,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import RemindersPage from "./pages/Reminders";
+import CalendarPage from "./pages/Calendar";
 import ChannelsPage from "./pages/Channels";
 import SettingsPage from "./pages/Settings";
 
@@ -52,6 +53,14 @@ function App() {
           element={
             <ProtectedRoute>
               <RemindersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <ProtectedRoute>
+              <CalendarPage />
             </ProtectedRoute>
           }
         />

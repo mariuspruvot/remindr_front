@@ -7,7 +7,7 @@
  * After: Directly calls useModals() - no prop drilling needed
  */
 
-import { LayoutDashboard, Bell, Radio, Settings, X } from "lucide-react";
+import { LayoutDashboard, Bell, Calendar, Radio, Settings, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 interface SidebarProps {
@@ -25,6 +25,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
       path: "/dashboard",
     },
     { id: "reminders", label: "Reminders", Icon: Bell, path: "/reminders" },
+    { id: "calendar", label: "Calendar", Icon: Calendar, path: "/calendar" },
     { id: "channels", label: "Channels", Icon: Radio, path: "/channels" },
     { id: "settings", label: "Settings", Icon: Settings, path: "/settings" },
   ];

@@ -43,18 +43,16 @@ export const formatReminderDate = (
 };
 
 /**
- * Get status display configuration
+ * Get status display configuration - Using DaisyUI badges
  */
 export const getStatusConfig = (sent: boolean) => {
   return sent
     ? {
-        label: "sent",
-        className:
-          "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400",
+        label: "Sent",
+        className: "badge badge-success gap-1",
       }
     : {
-        label: "scheduled",
-        className:
-          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400",
+        label: "Scheduled",
+        className: "badge badge-info gap-1",
       };
 };

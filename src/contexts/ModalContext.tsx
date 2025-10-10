@@ -27,6 +27,7 @@ interface ModalState {
   reminderModal: {
     isOpen: boolean;
     reminder?: Reminder; // undefined = create mode, defined = edit mode
+    initialDate?: string; // ISO date string for pre-filling scheduled_at in create mode
   };
   // Channel modal state
   channelModal: {
@@ -40,7 +41,7 @@ interface ModalContextValue {
   modals: ModalState;
 
   // Reminder modal actions
-  openReminderModal: (reminder?: Reminder) => void;
+  openReminderModal: (reminder?: Reminder, initialDate?: string) => void;
   closeReminderModal: () => void;
 
   // Channel modal actions
@@ -60,17 +61,17 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   });
 
   // Reminder modal actions
-  const openReminderModal = (reminder?: Reminder) => {
+  const openReminderModal = (reminder?: Reminder, initialDate?: string) => {
     setModals((prev) => ({
       ...prev,
-      reminderModal: { isOpen: true, reminder },
+      reminderModal: { isOpen: true, reminder, initialDate },
     }));
   };
 
   const closeReminderModal = () => {
     setModals((prev) => ({
       ...prev,
-      reminderModal: { isOpen: false, reminder: undefined },
+      reminderModal: { isOpen: false, reminder: undefined, initialDate: undefined },
     }));
   };
 

@@ -24,6 +24,7 @@ import type { Reminder, ReminderCreateRequest } from "../types/reminder.types";
 interface UseReminderFormProps {
   mode: "create" | "edit";
   reminder?: Reminder;
+  initialDate?: string; // ISO date string for pre-filling scheduled_at in create mode
   isOpen: boolean;
   onSuccess: () => void;
   onClose: () => void;
@@ -77,6 +78,7 @@ interface UseReminderFormReturn {
 export const useReminderForm = ({
   mode,
   reminder,
+  initialDate,
   isOpen,
   onSuccess,
   onClose,
@@ -109,15 +111,17 @@ export const useReminderForm = ({
         setScheduledAt(isoToDateTimeLocal(reminder.scheduled_at));
         setSelectedOutputIds(reminder.outputs.map((o) => o.id));
       } else {
-        // Create mode: set defaults
+        // Create mode: set defaults or use initialDate
         setReminderText("");
         setTargetUrl("");
-        setScheduledAt(getDefaultScheduleTime());
+        setScheduledAt(
+          initialDate ? isoToDateTimeLocal(initialDate) : getDefaultScheduleTime()
+        );
         setSelectedOutputIds([]);
       }
       setError(null);
     }
-  }, [mode, reminder, isOpen]);
+  }, [mode, reminder, initialDate, isOpen]);
 
   /**
    * Toggle channel selection

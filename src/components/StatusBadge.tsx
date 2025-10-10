@@ -13,9 +13,8 @@ function StatusBadge({ sent }: StatusBadgeProps) {
   const { label, className } = getStatusConfig(sent);
 
   return (
-    <span
-      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium ${className}`}
-    >
+    <span className={className}>
+      <span className="inline-block w-1.5 h-1.5 rounded-full bg-current"></span>
       {label}
     </span>
   );

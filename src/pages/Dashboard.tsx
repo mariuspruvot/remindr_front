@@ -94,14 +94,14 @@ function Dashboard() {
         <div className="flex items-center justify-between mb-5">
           <button
             onClick={handleNewReminder}
-            className="hidden lg:flex btn btn-sm shadow-xl rounded-lg bg-base-300 hover:bg-neutral/50 hover:shadow-2xl w-40 gap-2 border-none"
+            className="hidden lg:flex btn btn-primary btn-sm gap-2 shadow-lg hover:shadow-xl transition-all"
           >
             <Plus className="w-4 h-4" />
             New Reminder
           </button>
           <Link
             to="/reminders"
-            className="inline-flex items-center gap-2 text-sm font-medium text-base-content/60 hover:text-base-content transition-colors"
+            className="btn btn-ghost btn-sm gap-2"
           >
             View All
             <ArrowRight className="w-4 h-4" />
@@ -124,14 +124,14 @@ function Dashboard() {
         <div className="flex items-center justify-between mb-5">
           <button
             onClick={handleAddChannel}
-            className="btn btn-sm shadow-xl rounded-lg bg-base-300 hover:bg-neutral/50 hover:shadow-xl w-40 gap-2 border-none"
+            className="btn btn-secondary btn-sm gap-2 shadow-lg hover:shadow-xl transition-all"
           >
-            <Radio className="w-4 h-4 " />
+            <Radio className="w-4 h-4" />
             Add Channel
           </button>
           <Link
             to="/channels"
-            className="inline-flex items-center gap-2 text-sm font-medium text-base-content/60 hover:text-base-content transition-colors"
+            className="btn btn-ghost btn-sm gap-2"
           >
             View All
             <ArrowRight className="w-4 h-4" />

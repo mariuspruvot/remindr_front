@@ -34,6 +34,7 @@ function ReminderFormModal() {
   const form = useReminderForm({
     mode,
     reminder: reminderModal.reminder,
+    initialDate: reminderModal.initialDate,
     isOpen: reminderModal.isOpen,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reminders"] });
