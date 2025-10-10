@@ -89,10 +89,10 @@ export default function DayDetailsSidebar({
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: 300, opacity: 0 }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="bg-base-100 rounded-2xl border border-base-300 shadow-xl overflow-hidden h-full flex flex-col"
+        className="bg-card rounded-xl border shadow-lg overflow-hidden h-full flex flex-col"
       >
         {/* Header */}
-        <div className="px-6 py-5 border-b border-base-300 bg-gradient-to-r from-base-200/50 to-base-100">
+        <div className="px-6 py-5 border-b bg-gradient-to-r from-muted/30 to-background">
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-primary/10 rounded-lg">
@@ -130,13 +130,13 @@ export default function DayDetailsSidebar({
         </div>
 
         {/* Reminders list */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
           {sortedReminders.length === 0 ? (
             <div className="text-center py-12">
-              <div className="w-16 h-16 mx-auto mb-4 bg-base-200 rounded-full flex items-center justify-center">
-                <Calendar className="w-8 h-8 text-base-content/30" />
+              <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+                <Calendar className="w-8 h-8 text-muted-foreground" />
               </div>
-              <p className="text-base-content/60 text-sm mb-4">
+              <p className="text-muted-foreground text-sm mb-4">
                 No reminders scheduled for this day
               </p>
               <Button

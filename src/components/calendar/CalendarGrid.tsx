@@ -104,7 +104,7 @@ export default function CalendarGrid({
   const currentMonth = currentDate.getMonth();
 
   return (
-    <div className="bg-base-100 rounded-2xl border border-base-300 shadow-lg overflow-hidden">
+    <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-5 border-b bg-gradient-to-r from-muted/50 to-background">
         <div className="flex items-center gap-3">

@@ -18,32 +18,32 @@ interface ReminderTableProps {
 
 function ReminderTable({ reminders, onEdit, onDelete }: ReminderTableProps) {
   return (
-    <div className="border border-base-300 rounded-xl bg-base-100 shadow-lg overflow-hidden">
+    <div className="border rounded-xl bg-card shadow-sm overflow-hidden">
       {/* Table wrapper with horizontal scroll */}
       <div className="overflow-x-auto">
-        <table className="table table-hover table-sm sm:table-md">
+        <table className="w-full">
           <thead>
-            <tr className="border-b border-base-300 text-xs sm:text-sm">
-              <th className="bg-base-100">Message</th>
-              <th className="bg-base-100 hidden sm:table-cell">Link</th>
-              <th className="bg-base-100">Scheduled</th>
-              <th className="bg-base-100">Status</th>
-              <th className="bg-base-100 hidden md:table-cell">Channels</th>
-              <th className="bg-base-100 text-right">Actions</th>
+            <tr className="border-b text-xs sm:text-sm">
+              <th className="text-left font-medium p-4">Message</th>
+              <th className="text-left font-medium p-4 hidden sm:table-cell">Link</th>
+              <th className="text-left font-medium p-4">Scheduled</th>
+              <th className="text-left font-medium p-4">Status</th>
+              <th className="text-left font-medium p-4 hidden md:table-cell">Channels</th>
+              <th className="text-right font-medium p-4">Actions</th>
             </tr>
           </thead>
           <tbody>
             {reminders.map((reminder) => (
-              <tr key={reminder.id} className="hover:bg-base-200/50">
+              <tr key={reminder.id} className="border-b hover:bg-muted/50 transition-colors">
                 {/* Message */}
-                <td className="font-medium text-base-content min-w-[150px] sm:min-w-[200px] max-w-[200px] sm:max-w-[300px]">
+                <td className="p-4 font-medium min-w-[150px] sm:min-w-[200px] max-w-[200px] sm:max-w-[300px]">
                   <div className="truncate text-xs sm:text-sm">
                     {reminder.reminder_text}
                   </div>
                 </td>
 
                 {/* Link - Hidden on mobile */}
-                <td className="min-w-[100px] hidden sm:table-cell">
+                <td className="p-4 min-w-[100px] hidden sm:table-cell">
                   {reminder.target_url ? (
                     <a
                       href={reminder.target_url}
@@ -55,14 +55,14 @@ function ReminderTable({ reminders, onEdit, onDelete }: ReminderTableProps) {
                       Link
                     </a>
                   ) : (
-                    <span className="text-base-content/40 text-xs sm:text-sm">
+                    <span className="text-muted-foreground text-xs sm:text-sm">
                       —
                     </span>
                   )}
                 </td>
 
                 {/* Scheduled Date */}
-                <td className="text-xs sm:text-sm text-base-content/70 min-w-[120px] sm:min-w-[150px]">
+                <td className="p-4 text-xs sm:text-sm text-muted-foreground min-w-[120px] sm:min-w-[150px]">
                   <div className="flex items-center gap-1 sm:gap-2">
                     <Calendar className="w-3 h-3 sm:w-4 sm:h-4 hidden xs:block" />
                     <span>{formatReminderDate(reminder.scheduled_at)}</span>
@@ -70,12 +70,12 @@ function ReminderTable({ reminders, onEdit, onDelete }: ReminderTableProps) {
                 </td>
 
                 {/* Status */}
-                <td className="min-w-[80px] sm:min-w-[100px]">
+                <td className="p-4 min-w-[80px] sm:min-w-[100px]">
                   <StatusBadge sent={reminder.sent} />
                 </td>
 
                 {/* Channels - Hidden on mobile */}
-                <td className="min-w-[150px] hidden md:table-cell">
+                <td className="p-4 min-w-[150px] hidden md:table-cell">
                   <OutputChannels
                     outputs={reminder.outputs}
                     variant="compact"
@@ -83,8 +83,8 @@ function ReminderTable({ reminders, onEdit, onDelete }: ReminderTableProps) {
                 </td>
 
                 {/* Actions */}
-                <td className="text-right min-w-[80px] sm:min-w-[100px]">
-                  <div className="flex items-center justify-end gap-0.5 sm:gap-1">
+                <td className="p-4 text-right min-w-[80px] sm:min-w-[100px]">
+                  <div className="flex items-center justify-end gap-1">
                     <Button
                       onClick={() => onEdit(reminder)}
                       variant="ghost"
@@ -113,7 +113,7 @@ function ReminderTable({ reminders, onEdit, onDelete }: ReminderTableProps) {
 
       {/* Empty state */}
       {reminders.length === 0 && (
-        <div className="text-center py-12 text-base-content/60">
+        <div className="text-center py-12 text-muted-foreground">
           <p>No reminders yet. Create your first one!</p>
         </div>
       )}
