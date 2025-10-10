@@ -68,11 +68,11 @@ export default function ChannelSelector({
   return (
     <div className="space-y-3">
       {verifiedChannels.map((channel) => {
-        const isSelected = selectedIds.includes(channel.uuid);
+        const isSelected = selectedIds.includes(channel.id);
 
         return (
           <label
-            key={channel.uuid}
+            key={channel.id}
             className={`
               flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer
               transition-all duration-200
@@ -87,7 +87,7 @@ export default function ChannelSelector({
             <input
               type="checkbox"
               checked={isSelected}
-              onChange={() => onToggle(channel.uuid)}
+              onChange={() => onToggle(channel.id)}
               disabled={disabled}
               className="checkbox checkbox-primary"
             />

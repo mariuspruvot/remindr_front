@@ -48,8 +48,8 @@ export const useValidateOutput = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ uuid, code }: { uuid: string; code: string }) => {
-      const { data } = await api.post(`/outputs/${uuid}/validate`, { code });
+    mutationFn: async ({ id, code }: { id: string; code: string }) => {
+      const { data } = await api.post(`/outputs/${id}/validate`, { code });
       return data;
     },
     onSuccess: async (data) => {
@@ -73,9 +73,9 @@ export const useValidateOutput = () => {
 // Resend verification code
 export const useResendVerification = () => {
   return useMutation({
-    mutationFn: async (uuid: string) => {
+    mutationFn: async (id: string) => {
       // Backend endpoint is /resend-code not /resend
-      const { data } = await api.post(`/outputs/${uuid}/resend-code`);
+      const { data } = await api.post(`/outputs/${id}/resend-code`);
       return data;
     },
     onSuccess: () => {
@@ -95,9 +95,9 @@ export const useDeleteOutput = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (uuid: string) => {
-      await api.delete(`/outputs/${uuid}`);
-      return uuid;
+    mutationFn: async (id: string) => {
+      await api.delete(`/outputs/${id}`);
+      return id;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["outputs"] });

@@ -47,7 +47,7 @@ interface UseChannelFormReturn {
   isLoading: boolean;
   error: string | null;
   attemptsRemaining: number;
-  outputUuid: string | null;
+  outputid: string | null;
 
   // Actions
   handleCreateChannel: (e: React.FormEvent) => Promise<void>;
@@ -96,7 +96,7 @@ export const useChannelForm = ({
   const [selectedType, setSelectedType] = useState<OutputType>("email");
   const [identifier, setIdentifier] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
-  const [outputUuid, setOutputUuid] = useState<string | null>(null);
+  const [outputid, setOutputid] = useState<string | null>(null);
   // UI state
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -111,7 +111,7 @@ export const useChannelForm = ({
       setStep("validate");
       setSelectedType(existingChannel.output_type);
       setIdentifier(existingChannel.identifier);
-      setOutputUuid(existingChannel.uuid);
+      setOutputid(existingChannel.id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty deps = only on mount
@@ -125,7 +125,7 @@ export const useChannelForm = ({
     setSelectedType(existingChannel?.output_type || "email");
     setIdentifier(existingChannel?.identifier || "");
     setVerificationCode("");
-    setOutputUuid(existingChannel?.uuid || null);
+    setOutputid(existingChannel?.id || null);
     setError(null);
     setAttemptsRemaining(3);
   };
@@ -147,8 +147,8 @@ export const useChannelForm = ({
 
       const result = await createMutation.mutateAsync(data);
 
-      // Store the output UUID for validation step
-      setOutputUuid(result.uuid);
+      // Store the output id for validation step
+      setOutputid(result.id);
       setStep("validate");
 
       // Toast notification is shown by mutation's onSuccess
@@ -168,8 +168,8 @@ export const useChannelForm = ({
   const handleValidateCode = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!outputUuid) {
-      setError("No output UUID found. Please try creating the channel again.");
+    if (!outputid) {
+      setError("No output id found. Please try creating the channel again.");
       return;
     }
 
@@ -178,7 +178,7 @@ export const useChannelForm = ({
 
     try {
       const result = await validateMutation.mutateAsync({
-        uuid: outputUuid,
+        id: outputid,
         code: verificationCode.trim(),
       });
 
@@ -207,13 +207,13 @@ export const useChannelForm = ({
    * Called when user clicks "Resend Code" button
    */
   const handleResendCode = async () => {
-    if (!outputUuid) return;
+    if (!outputid) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
-      await resendMutation.mutateAsync(outputUuid);
+      await resendMutation.mutateAsync(outputid);
       // Toast is shown by mutation's onSuccess
       setAttemptsRemaining(3); // Reset attempts
     } catch (err) {
@@ -241,7 +241,7 @@ export const useChannelForm = ({
     isLoading,
     error,
     attemptsRemaining,
-    outputUuid,
+    outputid,
 
     // Actions
     handleCreateChannel,

@@ -35,7 +35,7 @@ function ChannelsList({
         const Icon = getOutputIcon(channel.output_type);
         return (
           <div
-            key={channel.uuid}
+            key={channel.id}
             className="p-4 hover:bg-base-200/30 transition-colors flex items-center justify-between gap-4"
           >
             {/* Channel Info */}
@@ -83,7 +83,7 @@ function ChannelsList({
                       `Are you sure you want to delete this ${channel.output_type} channel?`
                     )
                   ) {
-                    onDelete(channel.uuid);
+                    onDelete(channel.id);
                   }
                 }}
                 className="btn btn-ghost btn-sm btn-square text-error hover:bg-error/10"

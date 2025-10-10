@@ -107,7 +107,7 @@ export const useReminderForm = ({
         setReminderText(reminder.reminder_text);
         setTargetUrl(reminder.target_url || "");
         setScheduledAt(isoToDateTimeLocal(reminder.scheduled_at));
-        setSelectedOutputIds(reminder.outputs.map((o) => o.uuid));
+        setSelectedOutputIds(reminder.outputs.map((o) => o.id));
       } else {
         // Create mode: set defaults
         setReminderText("");
@@ -153,7 +153,7 @@ export const useReminderForm = ({
       reminder_text: reminderText.trim(),
       target_url: targetUrl.trim() || undefined,
       scheduled_at: new Date(scheduledAt).toISOString(),
-      output_uuids: selectedOutputIds,
+      output_ids: selectedOutputIds,
       expires_at: undefined,
     };
   };
@@ -182,7 +182,7 @@ export const useReminderForm = ({
         await createMutation.mutateAsync(data);
       } else if (reminder) {
         await updateMutation.mutateAsync({
-          uuid: reminder.uuid,
+          id: reminder.id,
           data,
         });
       }

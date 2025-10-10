@@ -22,15 +22,15 @@ export const useReminders = () => {
   });
 };
 
-// Fetch single reminder by UUID
-export const useReminder = (uuid: string) => {
+// Fetch single reminder by id
+export const useReminder = (id: string) => {
   return useQuery({
-    queryKey: ["reminders", uuid],
+    queryKey: ["reminders", id],
     queryFn: async () => {
-      const { data } = await api.get<Reminder>(`/reminders/${uuid}/`);
+      const { data } = await api.get<Reminder>(`/reminders/${id}/`);
       return data;
     },
-    enabled: !!uuid, // Only fetch if UUID exists
+    enabled: !!id, // Only fetch if id exists
   });
 };
 
@@ -49,10 +49,9 @@ export const useCreateReminder = () => {
       showToast("Reminder created successfully!", "success");
     },
     onError: (error: any) => {
-      showToast(
-        error.response?.data?.message || "Failed to create reminder",
-        "error"
-      );
+      // Don't show toast here - let the form handle error display
+      // The form will show the error in the UI
+      console.error("Failed to create reminder:", error);
     },
   });
 };
@@ -63,29 +62,27 @@ export const useUpdateReminder = () => {
 
   return useMutation({
     mutationFn: async ({
-      uuid,
+      id,
       data,
     }: {
-      uuid: string;
+      id: string;
       data: Partial<ReminderCreateRequest>;
     }) => {
       // Backend uses PUT not PATCH
-      const response = await api.put<Reminder>(`/reminders/${uuid}/`, data);
+      const response = await api.put<Reminder>(`/reminders/${id}/`, data);
       return response.data;
     },
     onSuccess: (_, variables) => {
       // Invalidate both list and single reminder
       queryClient.invalidateQueries({ queryKey: ["reminders"] });
       queryClient.invalidateQueries({
-        queryKey: ["reminders", variables.uuid],
+        queryKey: ["reminders", variables.id],
       });
       showToast("Reminder updated successfully!", "success");
     },
     onError: (error: any) => {
-      showToast(
-        error.response?.data?.message || "Failed to update reminder",
-        "error"
-      );
+      // Don't show toast here - let the form handle error display
+      console.error("Failed to update reminder:", error);
     },
   });
 };
@@ -95,9 +92,9 @@ export const useDeleteReminder = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (uuid: string) => {
-      await api.delete(`/reminders/${uuid}`);
-      return uuid;
+    mutationFn: async (id: string) => {
+      await api.delete(`/reminders/${id}`);
+      return id;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reminders"] });

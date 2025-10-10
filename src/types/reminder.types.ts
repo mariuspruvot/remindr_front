@@ -4,7 +4,7 @@
 export type OutputType = "email" | "whatsapp" | "telegram" | "webhook";
 
 export interface Output {
-  uuid: string;
+  id: string;
   output_type: OutputType;
   identifier: string; // email address, phone number, username, or webhook URL
   confirmed: boolean;
@@ -12,7 +12,7 @@ export interface Output {
 }
 
 export interface Reminder {
-  uuid: string;
+  id: string;
   reminder_text: string;
   target_url?: string | null;
   outputs: Output[];
@@ -32,7 +32,7 @@ export interface OutputStats {
 export interface ReminderCreateRequest {
   reminder_text: string;
   target_url?: string;
-  output_uuids: string[];
+  output_ids: string[];
   scheduled_at: string; // ISO 8601 datetime string
   expires_at?: string;
 }
@@ -54,7 +54,7 @@ export interface OutputValidationResponse {
 }
 
 export interface ValidationStatusResponse {
-  output_uuid: string;
+  output_id: string;
   confirmed: boolean;
   pending_validation: boolean;
   attempts_remaining: number;

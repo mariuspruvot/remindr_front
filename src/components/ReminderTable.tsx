@@ -33,7 +33,7 @@ function ReminderTable({ reminders, onEdit, onDelete }: ReminderTableProps) {
           </thead>
           <tbody>
             {reminders.map((reminder) => (
-              <tr key={reminder.uuid} className="hover:bg-base-200/50">
+              <tr key={reminder.id} className="hover:bg-base-200/50">
                 {/* Message */}
                 <td className="font-medium text-base-content min-w-[150px] sm:min-w-[200px] max-w-[200px] sm:max-w-[300px]">
                   <div className="truncate text-xs sm:text-sm">
@@ -92,7 +92,7 @@ function ReminderTable({ reminders, onEdit, onDelete }: ReminderTableProps) {
                       <Pencil className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </button>
                     <button
-                      onClick={() => onDelete(reminder.uuid)}
+                      onClick={() => onDelete(reminder.id)}
                       className="btn btn-ghost btn-xs sm:btn-sm btn-square text-error hover:bg-error/10"
                       aria-label="Delete reminder"
                     >

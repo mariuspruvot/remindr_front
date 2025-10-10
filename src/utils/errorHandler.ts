@@ -39,10 +39,27 @@ export const getErrorMessage = (
     if (error.response?.data?.message) {
       return error.response.data.message;
     }
-    // Backend sent error detail
+
+    // Backend sent error detail (could be string or validation error array)
     if (error.response?.data?.detail) {
-      return error.response.data.detail;
+      const detail = error.response.data.detail;
+
+      // Handle FastAPI validation errors (array of {type, loc, msg})
+      if (Array.isArray(detail)) {
+        // Extract and format validation error messages
+        const messages = detail.map((err: any) => {
+          const field = Array.isArray(err.loc) ? err.loc.join(".") : "field";
+          return `${field}: ${err.msg}`;
+        });
+        return messages.join(", ");
+      }
+
+      // Handle string detail
+      if (typeof detail === "string") {
+        return detail;
+      }
     }
+
     // Network or connection error
     if (error.message) {
       return error.message;
