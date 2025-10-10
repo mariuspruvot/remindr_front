@@ -13,6 +13,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { PageHeader, LoadingState } from "../components/common";
+import { Button } from "@/components/ui/button";
 import { CalendarGrid, DayDetailsSidebar } from "../components/calendar";
 import { useReminders, useDeleteReminder } from "../hooks/useReminders";
 import { useModals } from "../contexts/ModalContext";
@@ -61,13 +62,10 @@ function CalendarPage() {
         title="Calendar"
         subtitle={`${reminders.length} ${reminders.length === 1 ? "reminder" : "reminders"} scheduled`}
         action={
-          <button
-            onClick={() => handleCreateReminder()}
-            className="btn btn-primary gap-2 shadow-lg hover:shadow-xl transition-all"
-          >
+          <Button onClick={() => handleCreateReminder()}>
             <Plus className="w-5 h-5" />
             <span className="hidden sm:inline">New Reminder</span>
-          </button>
+          </Button>
         }
       />
 

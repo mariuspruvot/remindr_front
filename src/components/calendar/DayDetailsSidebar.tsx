@@ -5,6 +5,8 @@
 
 import { Calendar, Plus, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import OutputChannels from "../OutputChannels";
 import StatusBadge from "../StatusBadge";
 import type { Reminder } from "../../types/reminder.types";
@@ -106,22 +108,25 @@ export default function DayDetailsSidebar({
                 </p>
               </div>
             </div>
-            <button
+            <Button
               onClick={onClose}
-              className="btn btn-ghost btn-sm btn-circle"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
               aria-label="Close sidebar"
             >
               <X className="w-5 h-5" />
-            </button>
+            </Button>
           </div>
 
-          <button
+          <Button
             onClick={() => onCreateReminder(selectedDate)}
-            className="btn btn-primary btn-sm w-full gap-2 mt-3 shadow-md hover:shadow-lg transition-all"
+            size="sm"
+            className="w-full gap-2 mt-3"
           >
             <Plus className="w-4 h-4" />
             Add Reminder
-          </button>
+          </Button>
         </div>
 
         {/* Reminders list */}
@@ -134,23 +139,25 @@ export default function DayDetailsSidebar({
               <p className="text-base-content/60 text-sm mb-4">
                 No reminders scheduled for this day
               </p>
-              <button
+              <Button
                 onClick={() => onCreateReminder(selectedDate)}
-                className="btn btn-primary btn-sm gap-2 shadow-md hover:shadow-lg transition-all"
+                size="sm"
+                className="gap-2"
               >
                 <Plus className="w-4 h-4" />
                 Create One
-              </button>
+              </Button>
             </div>
           ) : (
             sortedReminders.map((reminder) => (
-              <motion.div
+              <Card
                 key={reminder.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="card bg-base-100 border border-base-300 shadow-md hover:shadow-lg transition-all duration-200"
+                className="p-4 space-y-3 shadow-sm hover:shadow-md transition-all duration-200"
               >
-                <div className="card-body p-4 space-y-3">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
                   {/* Time and Status */}
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-primary">
@@ -186,13 +193,15 @@ export default function DayDetailsSidebar({
 
                   {/* Actions */}
                   <div className="flex gap-2">
-                    <button
+                    <Button
                       onClick={() => onEditReminder(reminder)}
-                      className="btn btn-xs btn-ghost flex-1"
+                      variant="ghost"
+                      size="sm"
+                      className="flex-1"
                     >
                       Edit
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => {
                         if (
                           window.confirm(
@@ -202,13 +211,15 @@ export default function DayDetailsSidebar({
                           onDeleteReminder(reminder.id);
                         }
                       }}
-                      className="btn btn-xs btn-ghost text-error flex-1"
+                      variant="ghost"
+                      size="sm"
+                      className="flex-1 text-destructive hover:text-destructive"
                     >
                       Delete
-                    </button>
+                    </Button>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              </Card>
             ))
           )}
         </div>

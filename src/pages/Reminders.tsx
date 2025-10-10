@@ -9,6 +9,7 @@
 
 import { Plus } from "lucide-react";
 import { PageHeader, LoadingState, ErrorState } from "../components/common";
+import { Button } from "@/components/ui/button";
 import ReminderTable from "../components/ReminderTable";
 import { useReminders, useDeleteReminder } from "../hooks/useReminders";
 import { useModals } from "../contexts/ModalContext";
@@ -30,13 +31,10 @@ function RemindersPage() {
         title="All Reminders"
         subtitle={`${reminders?.length || 0} total reminders`}
         action={
-          <button
-            onClick={() => openReminderModal()}
-            className="btn btn-primary gap-2 shadow-lg hover:shadow-xl transition-all"
-          >
+          <Button onClick={() => openReminderModal()}>
             <Plus className="w-5 h-5" />
             New Reminder
-          </button>
+          </Button>
         }
       />
 

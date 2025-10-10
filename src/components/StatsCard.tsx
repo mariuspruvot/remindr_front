@@ -1,5 +1,6 @@
 import { type LucideProps } from "lucide-react";
 import { type FC } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface StatsCardProps {
   title: string;
@@ -29,14 +30,14 @@ function StatsCard({ title, value, subtitle, Icon, trend }: StatsCardProps) {
   };
 
   return (
-    <div className="card bg-base-100 border border-base-300 shadow-lg hover:shadow-xl transition-all duration-300">
-      <div className="card-body p-6">
+    <Card className="shadow-md hover:shadow-lg transition-all duration-300">
+      <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <p className="text-sm font-medium text-base-content/60 mb-2">
+            <p className="text-sm font-medium text-muted-foreground mb-2">
               {title}
             </p>
-            <p className="text-3xl font-bold text-base-content mb-1">{value}</p>
+            <p className="text-3xl font-bold mb-1">{value}</p>
             {subtitle && (
               <p className={`text-sm font-medium ${getTrendColor()}`}>
                 {subtitle}
@@ -49,8 +50,8 @@ function StatsCard({ title, value, subtitle, Icon, trend }: StatsCardProps) {
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 

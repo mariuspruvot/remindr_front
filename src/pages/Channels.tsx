@@ -9,6 +9,8 @@
 
 import { Plus } from "lucide-react";
 import { PageHeader, LoadingState, ErrorState } from "../components/common";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import ChannelsList from "../components/ChannelsList";
 import { useOutputs, useDeleteOutput } from "../hooks/useOutputs";
 import { useModals } from "../contexts/ModalContext";
@@ -31,36 +33,34 @@ function ChannelsPage() {
         title="Channels"
         subtitle={`${verifiedCount} verified, ${pendingCount} pending`}
         action={
-          <button
-            onClick={() => openChannelModal()}
-            className="btn btn-secondary gap-2 shadow-lg hover:shadow-xl transition-all"
-          >
+          <Button onClick={() => openChannelModal()} variant="secondary">
             <Plus className="w-5 h-5" />
             Add Channel
-          </button>
+          </Button>
         }
       />
 
       {/* Info Banner */}
-      <div className="alert alert-info shadow-lg mb-6">
+      <Alert className="mb-6">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          className="stroke-current shrink-0 w-6 h-6"
+          className="h-4 w-4"
         >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth="2"
+            stroke="currentColor"
             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <span className="text-sm">
+        <AlertDescription>
           Channels must be verified before you can use them for reminders. Check
           your email/phone for verification codes.
-        </span>
-      </div>
+        </AlertDescription>
+      </Alert>
 
       {/* Loading State */}
       {isLoading && <LoadingState size="lg" />}

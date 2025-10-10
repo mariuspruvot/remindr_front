@@ -4,6 +4,7 @@
  */
 
 import { Link2, Calendar, Pencil, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { formatReminderDate } from "../utils/reminder-helpers";
 import StatusBadge from "./StatusBadge";
 import OutputChannels from "./OutputChannels";
@@ -84,20 +85,24 @@ function ReminderTable({ reminders, onEdit, onDelete }: ReminderTableProps) {
                 {/* Actions */}
                 <td className="text-right min-w-[80px] sm:min-w-[100px]">
                   <div className="flex items-center justify-end gap-0.5 sm:gap-1">
-                    <button
+                    <Button
                       onClick={() => onEdit(reminder)}
-                      className="btn btn-ghost btn-xs sm:btn-sm btn-square"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
                       aria-label="Edit reminder"
                     >
-                      <Pencil className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    </button>
-                    <button
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button
                       onClick={() => onDelete(reminder.id)}
-                      className="btn btn-ghost btn-xs sm:btn-sm btn-square text-error hover:bg-error/10"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive hover:text-destructive"
                       aria-label="Delete reminder"
                     >
-                      <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    </button>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </td>
               </tr>

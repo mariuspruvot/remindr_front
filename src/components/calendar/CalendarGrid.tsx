@@ -5,6 +5,8 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import type { Reminder } from "../../types/reminder.types";
 
 interface CalendarGridProps {
@@ -104,40 +106,41 @@ export default function CalendarGrid({
   return (
     <div className="bg-base-100 rounded-2xl border border-base-300 shadow-lg overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-5 border-b border-base-300 bg-gradient-to-r from-base-200/50 to-base-100">
+      <div className="flex items-center justify-between px-6 py-5 border-b bg-gradient-to-r from-muted/50 to-background">
         <div className="flex items-center gap-3">
-          <button
+          <Button
             onClick={handlePrevMonth}
-            className="btn btn-ghost btn-sm btn-circle hover:bg-base-300"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
             aria-label="Previous month"
           >
             <ChevronLeft className="w-5 h-5" />
-          </button>
-          <h2 className="text-xl font-semibold text-base-content min-w-[200px] text-center">
+          </Button>
+          <h2 className="text-xl font-semibold min-w-[200px] text-center">
             {monthName}
           </h2>
-          <button
+          <Button
             onClick={handleNextMonth}
-            className="btn btn-ghost btn-sm btn-circle hover:bg-base-300"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
             aria-label="Next month"
           >
             <ChevronRight className="w-5 h-5" />
-          </button>
+          </Button>
         </div>
-        <button
-          onClick={handleToday}
-          className="btn btn-primary btn-sm shadow-md hover:shadow-lg transition-all"
-        >
+        <Button onClick={handleToday} size="sm">
           Today
-        </button>
+        </Button>
       </div>
 
       {/* Weekday headers */}
-      <div className="grid grid-cols-7 bg-base-200/30">
+      <div className="grid grid-cols-7 bg-muted/30">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
           <div
             key={day}
-            className="text-center py-3 text-sm font-semibold text-base-content/60 border-b border-base-300"
+            className="text-center py-3 text-sm font-semibold text-muted-foreground border-b"
           >
             {day}
           </div>
@@ -157,11 +160,11 @@ export default function CalendarGrid({
               key={index}
               onClick={() => onDateSelect(day)}
               className={`
-                relative min-h-[100px] p-2 border-b border-r border-base-300
+                relative min-h-[100px] p-2 border-b border-r
                 transition-all duration-200
-                ${!isCurrentMonth ? "bg-base-200/20 text-base-content/30" : ""}
-                ${isSelected ? "bg-primary/10 ring-2 ring-primary ring-inset" : "hover:bg-base-200/50"}
-                ${isTodayDate && !isSelected ? "bg-info/5 ring-1 ring-info ring-inset" : ""}
+                ${!isCurrentMonth ? "bg-muted/20 text-muted-foreground" : ""}
+                ${isSelected ? "bg-primary/10 ring-2 ring-primary ring-inset" : "hover:bg-muted/50"}
+                ${isTodayDate && !isSelected ? "bg-accent/50 ring-1 ring-accent ring-inset" : ""}
               `}
               whileHover={{ scale: isCurrentMonth ? 1.02 : 1 }}
               whileTap={{ scale: 0.98 }}
@@ -171,17 +174,17 @@ export default function CalendarGrid({
                 <span
                   className={`
                     text-sm font-medium
-                    ${isTodayDate ? "text-info font-bold" : ""}
-                    ${!isCurrentMonth ? "text-base-content/30" : "text-base-content"}
+                    ${isTodayDate ? "text-accent-foreground font-bold" : ""}
+                    ${!isCurrentMonth ? "text-muted-foreground" : ""}
                     ${isSelected ? "text-primary font-bold" : ""}
                   `}
                 >
                   {day.getDate()}
                 </span>
                 {dayReminders.length > 0 && (
-                  <span className="badge badge-xs badge-primary">
+                  <Badge variant="default" className="h-5 px-1.5 text-xs">
                     {dayReminders.length}
-                  </span>
+                  </Badge>
                 )}
               </div>
 
@@ -189,21 +192,19 @@ export default function CalendarGrid({
               {isCurrentMonth && dayReminders.length > 0 && (
                 <div className="space-y-1">
                   {dayReminders.slice(0, 2).map((reminder) => (
-                    <div
+                    <Badge
                       key={reminder.id}
-                      className={`
-                        text-xs px-2 py-1 rounded-md truncate text-left font-medium
-                        ${reminder.sent ? "badge badge-success badge-sm" : "badge badge-info badge-sm"}
-                      `}
+                      variant={reminder.sent ? "default" : "secondary"}
+                      className="w-full justify-start text-xs truncate"
                       title={reminder.reminder_text}
                     >
                       {reminder.reminder_text}
-                    </div>
+                    </Badge>
                   ))}
                   {dayReminders.length > 2 && (
-                    <div className="badge badge-ghost badge-xs ml-2">
+                    <Badge variant="outline" className="text-xs ml-2">
                       +{dayReminders.length - 2}
-                    </div>
+                    </Badge>
                   )}
                 </div>
               )}

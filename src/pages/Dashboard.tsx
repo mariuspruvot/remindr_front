@@ -10,6 +10,7 @@
 import { Bell, Clock, Send, Radio, ArrowRight, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PageHeader, LoadingState } from "../components/common";
+import { Button } from "@/components/ui/button";
 import StatsCard from "../components/StatsCard";
 import ReminderTable from "../components/ReminderTable";
 import ChannelsList from "../components/ChannelsList";
@@ -92,20 +93,24 @@ function Dashboard() {
       {/* Recent Reminders Section */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-5">
-          <button
+          <Button
             onClick={handleNewReminder}
-            className="hidden lg:flex btn btn-primary btn-sm gap-2 shadow-lg hover:shadow-xl transition-all"
+            className="hidden lg:flex gap-2"
+            size="sm"
           >
             <Plus className="w-4 h-4" />
             New Reminder
-          </button>
-          <Link
-            to="/reminders"
-            className="btn btn-ghost btn-sm gap-2"
+          </Button>
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
           >
-            View All
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+            <Link to="/reminders" className="gap-2">
+              View All
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </Button>
         </div>
 
         {remindersLoading ? (
@@ -122,20 +127,25 @@ function Dashboard() {
       {/* Channel Management Section */}
       <div>
         <div className="flex items-center justify-between mb-5">
-          <button
+          <Button
             onClick={handleAddChannel}
-            className="btn btn-secondary btn-sm gap-2 shadow-lg hover:shadow-xl transition-all"
+            variant="secondary"
+            size="sm"
+            className="gap-2"
           >
             <Radio className="w-4 h-4" />
             Add Channel
-          </button>
-          <Link
-            to="/channels"
-            className="btn btn-ghost btn-sm gap-2"
+          </Button>
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
           >
-            View All
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+            <Link to="/channels" className="gap-2">
+              View All
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </Button>
         </div>
 
         {channelsLoading ? (
