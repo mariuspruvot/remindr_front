@@ -39,10 +39,7 @@ function Dashboard() {
   };
 
   const handleResendVerification = async (channel: Output) => {
-    await resendVerification.mutateAsync({
-      output_type: channel.output_type,
-      identifier: channel.identifier,
-    });
+    await resendVerification.mutateAsync(channel.id);
   };
 
   const totalCount = reminders.length;

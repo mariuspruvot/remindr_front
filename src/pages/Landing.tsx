@@ -10,6 +10,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../components/theme-provider";
 import { useEffect } from "react";
 import { LoadingSpinner } from "../components/common";
+import { Button } from "@/components/ui/button";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
 
 // Subtle animation variants
 const fadeIn = {
@@ -47,7 +56,7 @@ function Landing() {
 
   return (
     <motion.div
-      className="min-h-screen flex flex-col overflow-y-auto overflow-x-hidden relative bg-base-100"
+      className="min-h-screen flex flex-col overflow-y-auto overflow-x-hidden relative bg-background"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -74,7 +83,7 @@ function Landing() {
           backgroundImage:
             "radial-gradient(color-mix(in srgb, currentColor 20%, transparent) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
-          color: "hsl(var(--bc))",
+          color: "hsl(var(--foreground))",
         }}
       />
       <div
@@ -84,98 +93,137 @@ function Landing() {
         }}
       />
 
-      {/* Navigation */}
-      <motion.nav
+      {/* Navigation - Clean, no borders */}
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="relative z-20 border-b border-base-300/30"
+        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Bell
-              className="w-5 h-5 sm:w-6 sm:h-6 text-primary"
-              strokeWidth={2.5}
-            />
-            <span className="text-xl sm:text-2xl font-bold tracking-tight">
-              Remindr
-            </span>
-          </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-center relative">
+          {/* Center Menu */}
+          <Menubar className="border-0 bg-transparent shadow-none">
+            <MenubarMenu>
+              <MenubarTrigger className="text-sm font-medium cursor-pointer">
+                Features
+              </MenubarTrigger>
+              <MenubarContent>
+                <MenubarItem>
+                  <Bell className="mr-2 h-4 w-4 text-primary" />
+                  <span>Multi-Channel Delivery</span>
+                </MenubarItem>
+                <MenubarItem>
+                  <Zap className="mr-2 h-4 w-4 text-orange-500" />
+                  <span>Lightning Fast Setup</span>
+                </MenubarItem>
+                <MenubarItem>
+                  <Shield className="mr-2 h-4 w-4 text-emerald-500" />
+                  <span>Secure & Private</span>
+                </MenubarItem>
+              </MenubarContent>
+            </MenubarMenu>
 
-          <div className="flex items-center gap-1.5 sm:gap-3">
-            {/* Theme Toggle */}
-            <button
+            <MenubarMenu>
+              <MenubarTrigger className="text-sm font-medium cursor-pointer">
+                Pricing
+              </MenubarTrigger>
+              <MenubarContent>
+                <MenubarItem>Free Plan</MenubarItem>
+                <MenubarItem>Pro Plan</MenubarItem>
+                <MenubarSeparator />
+                <MenubarItem>Enterprise</MenubarItem>
+              </MenubarContent>
+            </MenubarMenu>
+
+            <MenubarMenu>
+              <MenubarTrigger className="text-sm font-medium cursor-pointer">
+                About
+              </MenubarTrigger>
+              <MenubarContent>
+                <MenubarItem>Documentation</MenubarItem>
+                <MenubarItem>Support</MenubarItem>
+                <MenubarSeparator />
+                <MenubarItem>Contact</MenubarItem>
+              </MenubarContent>
+            </MenubarMenu>
+          </Menubar>
+
+          {/* Right Actions */}
+          <div className="absolute right-4 sm:right-6 flex items-center gap-2">
+            <Button
               onClick={toggleTheme}
-              className="btn btn-ghost btn-sm btn-circle"
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9"
               aria-label="Toggle theme"
             >
               {isDark ? (
-                <Sun className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Sun className="h-4 w-4" />
               ) : (
-                <Moon className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Moon className="h-4 w-4" />
               )}
-            </button>
+            </Button>
 
             {isSignedIn ? (
-              <Link
-                to="/dashboard"
-                className="btn btn-primary btn-sm gap-1.5 sm:gap-2 shadow-sm font-medium text-xs sm:text-sm"
-              >
-                <span className="hidden xs:inline">Dashboard</span>
-                <span className="xs:hidden">App</span>
-                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </Link>
+              <Button asChild size="sm" className="shadow-sm">
+                <Link to="/dashboard">
+                  <span className="hidden sm:inline">Dashboard</span>
+                  <span className="sm:hidden">App</span>
+                </Link>
+              </Button>
             ) : (
               <>
                 <SignInButton mode="modal">
-                  <button className="btn btn-ghost btn-sm font-medium text-xs sm:text-sm px-2 sm:px-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="hidden sm:inline-flex"
+                  >
                     Sign In
-                  </button>
+                  </Button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="btn btn-primary btn-sm shadow-sm font-medium text-xs sm:text-sm px-2 sm:px-4">
-                    <span className="hidden xs:inline">Get Started</span>
-                    <span className="xs:hidden">Start</span>
-                  </button>
+                  <Button size="sm" className="shadow-sm">
+                    Start
+                  </Button>
                 </SignUpButton>
               </>
             )}
           </div>
         </div>
-      </motion.nav>
-      {/* Main Content - Centered */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-12 sm:py-16 lg:py-20">
+      </motion.div>
+      {/* Main Content */}
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-20 sm:py-24 lg:py-32">
         <div className="max-w-7xl mx-auto w-full">
           {/* Hero Section */}
-          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+          <div className="text-center mb-12 sm:mb-16 lg:mb-20">
             {/* Badge */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1, duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-base-200 border border-base-300 text-xs sm:text-sm font-medium mb-4 sm:mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center px-4 py-2 rounded-full bg-muted/50 border border-border/50 text-sm font-medium mb-6"
             >
-              <span className="text-base-content/70">
+              <span className="text-foreground/70">
                 Multi-Channel Intelligence
               </span>
             </motion.div>
 
             {/* Main heading */}
             <motion.h1
-              variants={fadeIn}
-              initial="initial"
-              animate="animate"
-              transition={{ delay: 0.2 }}
-              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-base-content mb-4 sm:mb-5 leading-[1.1] sm:leading-[1.05] tracking-[-0.02em] px-2"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold mb-6 leading-tight tracking-tight"
             >
               Never{" "}
-              <span className="relative inline-block font-medium italic text-base-content/90">
+              <span className="relative inline-block italic">
                 forget
                 <motion.span
-                  className="absolute -bottom-0.5 sm:-bottom-1 left-0 right-0 h-[1.5px] sm:h-[2px] bg-primary/40"
-                  initial={{ scaleX: 0, originX: 0 }}
+                  className="absolute -bottom-1 left-0 right-0 h-[2px] bg-foreground/20"
+                  initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
-                  transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
+                  transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
                 />
               </span>{" "}
               again
@@ -183,11 +231,10 @@ function Landing() {
 
             {/* Description */}
             <motion.p
-              variants={fadeIn}
-              initial="initial"
-              animate="animate"
-              transition={{ delay: 0.3 }}
-              className="text-base sm:text-lg md:text-xl italic text-base-content/60 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed"
             >
               Smart, multi-channel reminders that ensure you never miss what
               matters
@@ -195,26 +242,19 @@ function Landing() {
 
             {/* CTA */}
             <motion.div
-              variants={fadeIn}
-              initial="initial"
-              animate="animate"
-              transition={{ delay: 0.4 }}
-              className="mb-8 sm:mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.6 }}
             >
               {isSignedIn ? (
-                <Link to="/dashboard">
-                  <button className="btn btn-primary btn-md sm:btn-lg gap-2 shadow-lg font-medium">
-                    Go to Dashboard
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </button>
-                </Link>
+                <Button asChild size="lg" className="shadow-lg">
+                  <Link to="/dashboard">Go to Dashboard</Link>
+                </Button>
               ) : (
                 <SignUpButton mode="modal">
-                  <button className="btn btn-primary btn-md sm:btn-lg gap-2 shadow-lg font-medium">
-                    <span className="hidden xs:inline">Get Started — Free</span>
-                    <span className="xs:hidden">Get Started</span>
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </button>
+                  <Button size="lg" className="shadow-lg">
+                    Get Started
+                  </Button>
                 </SignUpButton>
               )}
             </motion.div>
@@ -222,10 +262,10 @@ function Landing() {
 
           {/* Features Grid */}
           <motion.div
-            variants={stagger}
-            initial="initial"
-            animate="animate"
-            className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 max-w-5xl mx-auto"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+            className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto"
           >
             {[
               {
@@ -253,45 +293,37 @@ function Landing() {
                 bgColor: "bg-emerald-500/10",
               },
             ].map((feature, index) => (
-              <motion.div
+              <div
                 key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
-                className="p-5 sm:p-6 lg:p-8 border border-base-300/50 rounded-xl sm:rounded-2xl bg-base-100/50 backdrop-blur-sm hover:border-base-300 transition-colors duration-300"
+                className="p-6 rounded-xl border bg-card/50 backdrop-blur-sm hover:bg-card hover:border-border/80 shadow-sm hover:shadow-md transition-all duration-300"
               >
                 <div
-                  className={`inline-flex p-2 sm:p-2.5 rounded-lg sm:rounded-xl ${feature.bgColor} mb-3 sm:mb-4`}
+                  className={`inline-flex p-2.5 rounded-lg ${feature.bgColor} mb-4`}
                 >
                   <feature.icon
-                    className={`w-4 h-4 sm:w-5 sm:h-5 ${feature.iconColor}`}
+                    className={`w-5 h-5 ${feature.iconColor}`}
                     strokeWidth={2}
                   />
                 </div>
-                <h3 className="text-base sm:text-lg font-semibold mb-1.5 sm:mb-2 text-base-content">
+                <h3 className="text-base font-semibold mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-base-content/60 leading-relaxed">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {feature.description}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </motion.div>
         </div>
       </main>
       {/* Footer */}
-      <motion.footer
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8, duration: 0.5 }}
-        className="relative z-10 border-t border-base-300/30 py-3 sm:py-4"
-      >
+      <footer className="relative z-10 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <p className="text-xs text-base-content/50">
+          <p className="text-sm text-muted-foreground">
             © 2025 Remindr. Built with care.
           </p>
         </div>
-      </motion.footer>
+      </footer>
     </motion.div>
   );
 }
