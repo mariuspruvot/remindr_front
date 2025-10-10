@@ -1,38 +1,43 @@
+/**
+ * Navbar - Professional header using shadcn styles
+ * Sticky header with branding and user menu
+ */
+
 import { Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 import { UserButton } from "@clerk/clerk-react";
+import { Button } from "@/components/ui/button";
 
 interface NavbarProps {
   onMenuClick: () => void;
 }
 
-function Navbar({ onMenuClick }: NavbarProps) {
+export default function Navbar({ onMenuClick }: NavbarProps) {
   return (
-    <header className="sticky top-0 z-50 border-b border-base-200 bg-base-200 shadow-xl">
-      <div className="flex items-center justify-between px-4 lg:px-6 py-4 relative z-10">
-        {/* Left side: Hamburger (mobile only) + Logo */}
+    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
+      <div className="flex items-center justify-between px-4 lg:px-6 py-3">
+        {/* Left: Menu + Logo */}
         <div className="flex items-center gap-3">
-          {/* Hamburger button - visible only on mobile/tablet */}
-          <button
+          <Button
             onClick={onMenuClick}
-            className="btn btn-ghost btn-sm btn-circle lg:hidden"
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
             aria-label="Toggle menu"
           >
-            <Menu className="w-5 h-5" />
-          </button>
+            <Menu className="h-5 w-5" />
+          </Button>
 
-          {/* Logo */}
           <Link
             to="/dashboard"
-            className="text-2xl font-bold  text-base-content"
+            className="text-2xl font-bold text-foreground hover:text-primary transition-colors"
           >
             Remindr
           </Link>
         </div>
 
-        {/* Right side actions */}
+        {/* Right: User Menu */}
         <div className="flex items-center gap-2 lg:gap-3">
-          {/* Clerk User Button with profile menu */}
           <UserButton
             afterSignOutUrl="/"
             appearance={{
@@ -46,5 +51,3 @@ function Navbar({ onMenuClick }: NavbarProps) {
     </header>
   );
 }
-
-export default Navbar;

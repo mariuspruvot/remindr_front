@@ -1,22 +1,28 @@
 /**
- * Sidebar - Navigation and quick actions
- *
- * REFACTORED: Uses ModalContext instead of prop callbacks
- *
- * Before: Received onAddChannel and onNewReminder callbacks from parent
- * After: Directly calls useModals() - no prop drilling needed
+ * Sidebar - Professional navigation using shadcn styles
+ * Responsive sidebar with mobile overlay
  */
 
-import { LayoutDashboard, Bell, Calendar, Radio, Settings, X } from "lucide-react";
+import {
+  LayoutDashboard,
+  Bell,
+  Calendar,
+  Radio,
+  Settings,
+  X,
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-function Sidebar({ isOpen, onClose }: SidebarProps) {
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
+
   const menuItems = [
     {
       id: "dashboard",
@@ -32,7 +38,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Backdrop - only visible on mobile when sidebar is open */}
+      {/* Backdrop - mobile only */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-30 lg:hidden"
@@ -43,48 +49,49 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`
-          fixed lg:sticky
-          inset-x-0 top-16 lg:top-16
-          z-40
-          w-full lg:w-64
-          max-h-[80vh] lg:max-h-[calc(100vh-4rem)]
-          overflow-y-auto
-          border-b lg:border-b-0 lg:border-r border-base-200 bg-base-100
-          transform transition-transform duration-300 ease-in-out
-          lg:transform-none
-          ${isOpen ? "translate-y-0" : "-translate-y-full lg:translate-y-0"}
-        `}
+        className={cn(
+          "fixed lg:sticky inset-x-0 top-16 lg:top-16 z-40",
+          "w-full lg:w-64 max-h-[80vh] lg:max-h-[calc(100vh-4rem)]",
+          "overflow-y-auto border-b lg:border-b-0 lg:border-r",
+          "bg-background transform transition-transform duration-300 ease-in-out",
+          "lg:transform-none",
+          isOpen ? "translate-y-0" : "-translate-y-full lg:translate-y-0"
+        )}
       >
-        <div className="relative h-full p-4 bg-base-200">
-          {/* Header with close button - only visible on mobile */}
-          <div className="flex items-center justify-between mb-4 lg:hidden relative z-10">
+        <div className="relative h-full p-4 bg-muted/30">
+          {/* Mobile header */}
+          <div className="flex items-center justify-between mb-4 lg:hidden">
             <span className="text-lg font-semibold">Menu</span>
-            <button
+            <Button
               onClick={onClose}
-              className="btn btn-ghost btn-sm btn-circle"
-              aria-label="Close menu"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
             >
-              <X className="w-5 h-5" />
-            </button>
+              <X className="h-5 w-5" />
+              <span className="sr-only">Close menu</span>
+            </Button>
           </div>
-          {/* Navigation Menu */}
-          <nav className="space-y-1 relative z-10 mt-6">
+
+          {/* Navigation */}
+          <nav className="space-y-1 mt-6">
             {menuItems.map((item) => {
               const Icon = item.Icon;
               const isActive = location.pathname === item.path;
+
               return (
                 <Link
                   key={item.id}
                   to={item.path}
                   onClick={onClose}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all",
                     isActive
-                      ? "bg-base-300 text-base-content shadow-lg"
-                      : "text-base-content/60 hover:bg-base-300/60 hover:text-base-content"
-                  }`}
+                      ? "bg-secondary text-secondary-foreground shadow"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  )}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="h-4 w-4" />
                   {item.label}
                 </Link>
               );
@@ -95,5 +102,3 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
     </>
   );
 }
-
-export default Sidebar;

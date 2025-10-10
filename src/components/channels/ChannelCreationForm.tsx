@@ -1,9 +1,12 @@
 /**
- * Channel Creation Form
- * Form for creating a new channel (step 1)
+ * Channel Creation Form - Professional shadcn implementation
+ * Step 1 of channel creation flow
  */
 
 import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { DialogFooter } from "@/components/ui/dialog";
 import type { OutputType } from "../../types/reminder.types";
 import ChannelTypeSelector from "./ChannelTypeSelector";
 import ChannelInput from "./ChannelInput";
@@ -50,36 +53,32 @@ export default function ChannelCreationForm({
 
       {/* Error Message */}
       {error && (
-        <div className="alert alert-error">
-          <span className="text-sm">{error}</span>
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
 
       {/* Actions */}
-      <div className="flex gap-3 pt-2">
-        <button
+      <DialogFooter className="gap-2 sm:gap-0">
+        <Button
           type="button"
+          variant="outline"
           onClick={onCancel}
-          className="btn btn-ghost flex-1"
           disabled={isLoading}
         >
           Cancel
-        </button>
-        <button
-          type="submit"
-          className="btn btn-primary flex-1"
-          disabled={isLoading || !isValid}
-        >
+        </Button>
+        <Button type="submit" disabled={isLoading || !isValid}>
           {isLoading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Sending...
             </>
           ) : (
             "Send Code"
           )}
-        </button>
-      </div>
+        </Button>
+      </DialogFooter>
     </form>
   );
 }

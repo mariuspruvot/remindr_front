@@ -1,15 +1,14 @@
 /**
- * Channel selector component
- * Displays available channels and allows multi-selection
- *
- * Why a separate component?
- * - Reusable channel selection logic
- * - Single responsibility: manage channel selection UI
- * - Easier to add features (search, filter, etc.)
- * - Reduces parent component size
+ * Channel selector component - Professional shadcn implementation
+ * Multi-select interface for verified channels
  */
 
 import { AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import OutputChannels from "../OutputChannels";
 import type { Output } from "../../types/reminder.types";
 
@@ -21,18 +20,6 @@ interface ChannelSelectorProps {
   disabled?: boolean;
 }
 
-/**
- * Renders channel selection interface
- * Shows verified channels with checkboxes
- *
- * @example
- * <ChannelSelector
- *   channels={verifiedChannels}
- *   selectedIds={form.selectedOutputIds}
- *   onToggle={form.toggleChannel}
- *   onAddChannel={openChannelModal}
- * />
- */
 export default function ChannelSelector({
   channels,
   selectedIds,
@@ -40,56 +27,47 @@ export default function ChannelSelector({
   onAddChannel,
   disabled = false,
 }: ChannelSelectorProps) {
-  // Filter only verified channels
   const verifiedChannels = channels.filter((ch) => ch.confirmed);
 
-  // No channels available
   if (verifiedChannels.length === 0) {
     return (
-      <div className="border-2 border-dashed border-base-300 rounded-xl p-6 text-center">
-        <AlertCircle className="w-12 h-12 mx-auto mb-3 text-base-content/40" />
-        <p className="text-sm text-base-content/70 mb-4">
+      <div className="rounded-lg border-2 border-dashed p-6 text-center">
+        <AlertCircle className="mx-auto mb-3 h-12 w-12 text-muted-foreground/50" />
+        <p className="mb-4 text-sm text-muted-foreground">
           You don't have any verified channels yet.
           <br />
           Add and verify a channel to create reminders.
         </p>
-        <button
-          type="button"
-          onClick={onAddChannel}
-          className="btn btn-primary btn-sm"
-        >
+        <Button type="button" size="sm" onClick={onAddChannel}>
           Add Channel
-        </button>
+        </Button>
       </div>
     );
   }
 
-  // Channels available - show selection
   return (
     <div className="space-y-3">
       {verifiedChannels.map((channel) => {
         const isSelected = selectedIds.includes(channel.id);
+        const id = `channel-${channel.id}`;
 
         return (
-          <label
+          <Label
             key={channel.id}
-            className={`
-              flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer
-              transition-all duration-200
-              ${
-                isSelected
-                  ? "border-primary bg-primary/10"
-                  : "border-base-300 hover:border-base-400 hover:bg-base-200/50"
-              }
-              ${disabled ? "opacity-50 cursor-not-allowed" : ""}
-            `}
+            htmlFor={id}
+            className={cn(
+              "flex items-center gap-3 rounded-lg border-2 p-4 cursor-pointer transition-all",
+              isSelected
+                ? "border-primary bg-primary/5"
+                : "border-input hover:border-muted-foreground/50 hover:bg-accent",
+              disabled && "opacity-50 cursor-not-allowed"
+            )}
           >
-            <input
-              type="checkbox"
+            <Checkbox
+              id={id}
               checked={isSelected}
-              onChange={() => onToggle(channel.id)}
+              onCheckedChange={() => onToggle(channel.id)}
               disabled={disabled}
-              className="checkbox checkbox-primary"
             />
 
             <div className="flex-1">
@@ -97,21 +75,24 @@ export default function ChannelSelector({
             </div>
 
             {channel.primary && (
-              <span className="badge badge-sm badge-primary">Primary</span>
+              <Badge variant="default" className="text-xs">
+                Primary
+              </Badge>
             )}
-          </label>
+          </Label>
         );
       })}
 
-      {/* Add more channels button */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="sm"
         onClick={onAddChannel}
-        className="btn btn-ghost btn-sm w-full"
         disabled={disabled}
+        className="w-full"
       >
         + Add Another Channel
-      </button>
+      </Button>
     </div>
   );
 }

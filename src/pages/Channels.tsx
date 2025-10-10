@@ -34,7 +34,7 @@ function ChannelsPage() {
         subtitle={`${verifiedCount} verified, ${pendingCount} pending`}
         action={
           <Button onClick={() => openChannelModal()} variant="secondary">
-            <Plus className="w-5 h-5" />
+            <Plus className="h-4 w-4" />
             Add Channel
           </Button>
         }

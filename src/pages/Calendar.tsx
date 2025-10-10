@@ -29,10 +29,10 @@ function CalendarPage() {
 
   const handleCreateReminder = (date?: Date) => {
     const scheduledDate = date || selectedDate || new Date();
-    
+
     // Set time to next hour
     scheduledDate.setHours(scheduledDate.getHours() + 1, 0, 0, 0);
-    
+
     openReminderModal(undefined, scheduledDate.toISOString());
   };
 
@@ -60,10 +60,12 @@ function CalendarPage() {
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       <PageHeader
         title="Calendar"
-        subtitle={`${reminders.length} ${reminders.length === 1 ? "reminder" : "reminders"} scheduled`}
+        subtitle={`${reminders.length} ${
+          reminders.length === 1 ? "reminder" : "reminders"
+        } scheduled`}
         action={
           <Button onClick={() => handleCreateReminder()}>
-            <Plus className="w-5 h-5" />
+            <Plus className="h-4 w-4" />
             <span className="hidden sm:inline">New Reminder</span>
           </Button>
         }

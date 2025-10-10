@@ -1,10 +1,12 @@
 /**
- * Toast notification utility using DaisyUI
- * Provides success, error, and info notifications
+ * Toast notification utility - Professional shadcn-style implementation
+ * Success, error, and info notifications
  */
 
-import { CheckCircle, XCircle, Info } from "lucide-react";
+import { CheckCircle, XCircle, Info, X } from "lucide-react";
 import { createRoot } from "react-dom/client";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type ToastType = "success" | "error" | "info";
 
@@ -25,41 +27,46 @@ const ToastComponent = ({
     info: Info,
   };
 
-  const colors = {
-    success: "alert-success",
-    error: "alert-error",
-    info: "alert-info",
+  const styles = {
+    success:
+      "bg-green-50 border-green-200 text-green-900 dark:bg-green-950 dark:border-green-800 dark:text-green-50",
+    error:
+      "bg-red-50 border-red-200 text-red-900 dark:bg-red-950 dark:border-red-800 dark:text-red-50",
+    info: "bg-blue-50 border-blue-200 text-blue-900 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-50",
   };
 
   const Icon = icons[type];
 
   return (
-    <div className={`alert ${colors[type]} shadow-lg max-w-md`}>
-      <Icon className="w-5 h-5" />
-      <span className="text-sm">{message}</span>
-      <button
+    <div
+      className={cn(
+        "flex items-center gap-3 rounded-lg border p-4 shadow-lg max-w-md",
+        styles[type]
+      )}
+    >
+      <Icon className="h-5 w-5 flex-shrink-0" />
+      <span className="text-sm flex-1">{message}</span>
+      <Button
         onClick={onClose}
-        className="btn btn-ghost btn-sm btn-circle"
-        aria-label="Close"
+        variant="ghost"
+        size="icon"
+        className="h-6 w-6 rounded-full flex-shrink-0"
       >
-        ×
-      </button>
+        <X className="h-4 w-4" />
+        <span className="sr-only">Close</span>
+      </Button>
     </div>
   );
 };
 
 /**
  * Show a toast notification
- * @param message The message to display
- * @param type The type of toast (success, error, info)
- * @param duration Duration in ms (default 3000)
  */
 export const showToast = (
   message: string,
   type: ToastType = "info",
   duration: number = 3000
 ) => {
-  // Create container if it doesn't exist
   let container = document.getElementById("toast-container");
   if (!container) {
     container = document.createElement("div");
@@ -69,13 +76,11 @@ export const showToast = (
     document.body.appendChild(container);
   }
 
-  // Create toast element
   const toastElement = document.createElement("div");
   toastElement.className =
     "pointer-events-auto animate-in slide-in-from-right duration-300";
   container.appendChild(toastElement);
 
-  // Render toast
   const root = createRoot(toastElement);
   const handleClose = () => {
     toastElement.classList.add("animate-out", "slide-out-to-right");
@@ -83,7 +88,6 @@ export const showToast = (
       root.unmount();
       toastElement.remove();
 
-      // Remove container if empty
       if (container && container.children.length === 0) {
         container.remove();
       }
@@ -94,7 +98,6 @@ export const showToast = (
     <ToastComponent message={message} type={type} onClose={handleClose} />
   );
 
-  // Auto-dismiss
   if (duration > 0) {
     setTimeout(handleClose, duration);
   }

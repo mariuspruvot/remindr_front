@@ -1,9 +1,14 @@
 /**
- * Channel Validation Form
- * Form for validating a channel with verification code (step 2)
+ * Channel Validation Form - Professional shadcn implementation
+ * Step 2 of channel creation flow (verification code)
  */
 
 import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { DialogFooter } from "@/components/ui/dialog";
 
 interface ChannelValidationFormProps {
   identifier: string;
@@ -34,31 +39,29 @@ export default function ChannelValidationForm({
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       {/* Instructions */}
-      <div className="bg-base-200 rounded-lg p-4">
-        <p className="text-sm text-base-content/70">
+      <div className="rounded-lg bg-muted p-4">
+        <p className="text-sm text-muted-foreground">
           We sent a verification code to{" "}
-          <span className="font-medium text-base-content">{identifier}</span>
+          <span className="font-medium text-foreground">{identifier}</span>
         </p>
       </div>
 
       {/* Code Input */}
-      <div>
-        <label htmlFor="code" className="block text-sm font-medium mb-2">
-          Verification Code
-        </label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="code">Verification Code</Label>
+        <Input
           id="code"
           type="text"
           value={verificationCode}
           onChange={(e) => onCodeChange(e.target.value)}
           placeholder="Enter 6-digit code"
-          className="input input-bordered w-full text-center text-lg tracking-wider"
+          className="text-center text-lg tracking-wider"
           maxLength={6}
           required
           disabled={isLoading}
           autoFocus
         />
-        <p className="text-xs text-base-content/60 mt-1 text-center">
+        <p className="text-xs text-muted-foreground text-center">
           {attemptsRemaining} {attemptsRemaining === 1 ? "attempt" : "attempts"}{" "}
           remaining
         </p>
@@ -66,48 +69,45 @@ export default function ChannelValidationForm({
 
       {/* Error Message */}
       {error && (
-        <div className="alert alert-error">
-          <span className="text-sm">{error}</span>
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
 
       {/* Resend Code */}
       <div className="text-center">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={onResend}
-          className="btn btn-ghost btn-sm"
           disabled={isLoading}
         >
           Didn't receive code? Resend
-        </button>
+        </Button>
       </div>
 
       {/* Actions */}
-      <div className="flex gap-3 pt-2">
-        <button
+      <DialogFooter className="gap-2 sm:gap-0">
+        <Button
           type="button"
+          variant="outline"
           onClick={onCancel}
-          className="btn btn-ghost flex-1"
           disabled={isLoading}
         >
           Cancel
-        </button>
-        <button
-          type="submit"
-          className="btn btn-primary flex-1"
-          disabled={!canSubmit}
-        >
+        </Button>
+        <Button type="submit" disabled={!canSubmit}>
           {isLoading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Verifying...
             </>
           ) : (
             "Verify"
           )}
-        </button>
-      </div>
+        </Button>
+      </DialogFooter>
     </form>
   );
 }

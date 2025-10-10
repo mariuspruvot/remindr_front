@@ -1,24 +1,12 @@
 /**
- * MainLayout - Main application layout
- *
- * REFACTORED: From 183 lines to ~80 lines
- *
- * What it does:
- * - Provides consistent layout structure (Navbar, Sidebar, Content)
- * - Handles mobile sidebar toggle
- * - Renders background patterns
- * - Renders global modals (managed by ModalContext)
- *
- * What it NO LONGER does:
- * - ❌ Manages modal state (now in ModalContext)
- * - ❌ Listens to "trigger" props (anti-pattern eliminated)
- * - ❌ Invalidates React Query cache (modals handle their own success)
- * - ❌ Receives callbacks from parent (no more prop drilling)
+ * MainLayout - Professional application layout
+ * Consistent structure with shadcn styling
  */
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
@@ -39,7 +27,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <motion.div
-      className="min-h-screen bg-base-200 relative flex flex-col"
+      className="min-h-screen bg-background relative flex flex-col"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -47,22 +35,27 @@ export default function MainLayout({ children }: MainLayoutProps) {
     >
       {/* Layout Structure */}
       <Navbar onMenuClick={toggleSidebar} />
+
       <div className="flex flex-1 min-h-0">
         <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
+
         <div className="flex-1 flex flex-col">
           <main className="flex-1 w-full lg:w-auto">{children}</main>
           <Footer />
         </div>
       </div>
-      {/* Floating Action Button (FAB) - Mobile only */}
-      <button
+
+      {/* Floating Action Button - Mobile only */}
+      <Button
         onClick={() => openReminderModal()}
-        className="fixed bottom-6 right-6 z-40 lg:hidden btn btn-circle btn-lg bg-base-content text-base-100 hover:bg-base-content/90 border-none shadow-xl hover:shadow-2xl transition-all"
+        size="lg"
+        className="fixed bottom-6 right-6 z-40 lg:hidden h-14 w-14 rounded-full shadow-lg hover:shadow-xl"
         aria-label="New reminder"
       >
-        <Plus className="w-6 h-6" />
-      </button>
-      {/* Global Modals - Managed by ModalContext */}
+        <Plus className="h-6 w-6" />
+      </Button>
+
+      {/* Global Modals */}
       <ReminderFormModal />
       <ChannelModal />
     </motion.div>

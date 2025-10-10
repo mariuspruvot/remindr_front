@@ -1,9 +1,11 @@
 /**
- * Channel Input Component
- * Renders an input field with validation for a specific channel type
+ * Channel Input Component - Professional shadcn implementation
+ * Input field with validation for specific channel types
  */
 
 import { AlertCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { OutputType } from "../../types/reminder.types";
 import { useChannelValidation } from "../../hooks/useChannelValidation";
 
@@ -41,14 +43,13 @@ export default function ChannelInput({
 
   return (
     <div className="space-y-2">
-      <label className="label">
-        <span className="label-text font-medium flex items-center gap-2">
-          <Icon className="w-4 h-4" />
-          {config.label}
-        </span>
-      </label>
+      <Label htmlFor="channel-input" className="flex items-center gap-2">
+        <Icon className="h-4 w-4" />
+        {config.label}
+      </Label>
 
-      <input
+      <Input
+        id="channel-input"
         type="text"
         value={value}
         onChange={(e) => handleChange(e.target.value)}
@@ -56,16 +57,16 @@ export default function ChannelInput({
         placeholder={config.placeholder}
         disabled={disabled}
         autoFocus={autoFocus}
-        className={`input input-bordered w-full ${error ? "input-error" : ""}`}
+        className={error ? "border-destructive" : ""}
       />
 
       {config.helpText && !error && (
-        <p className="text-xs text-base-content/60">{config.helpText}</p>
+        <p className="text-xs text-muted-foreground">{config.helpText}</p>
       )}
 
       {error && (
-        <div className="flex items-start gap-2 text-error text-sm">
-          <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+        <div className="flex items-start gap-2 text-destructive text-sm">
+          <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}

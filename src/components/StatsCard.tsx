@@ -1,52 +1,59 @@
-import { type LucideProps } from "lucide-react";
-import { type FC } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { type LucideIcon } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 interface StatsCardProps {
   title: string;
   value: string | number;
   subtitle?: string;
-  Icon?: FC<LucideProps>;
+  Icon?: LucideIcon;
   trend?: "up" | "down" | "neutral";
 }
 
-function StatsCard({ title, value, subtitle, Icon, trend }: StatsCardProps) {
-  const getTrendColor = () => {
-    if (trend === "up") return "text-success";
-    if (trend === "down") return "text-error";
-    return "text-base-content/60";
+export default function StatsCard({
+  title,
+  value,
+  subtitle,
+  Icon,
+  trend = "neutral",
+}: StatsCardProps) {
+  const getIconStyles = () => {
+    switch (trend) {
+      case "up":
+        return "bg-green-500/10 text-green-600 dark:text-green-500";
+      case "down":
+        return "bg-red-500/10 text-red-600 dark:text-red-500";
+      default:
+        return "bg-primary/10 text-primary";
+    }
   };
 
-  const getIconBg = () => {
-    if (trend === "up") return "bg-success/10";
-    if (trend === "down") return "bg-error/10";
-    return "bg-primary/10";
-  };
-
-  const getIconColor = () => {
-    if (trend === "up") return "text-success";
-    if (trend === "down") return "text-error";
-    return "text-primary";
+  const getSubtitleStyles = () => {
+    switch (trend) {
+      case "up":
+        return "text-green-600 dark:text-green-500";
+      case "down":
+        return "text-red-600 dark:text-red-500";
+      default:
+        return "text-muted-foreground";
+    }
   };
 
   return (
-    <Card className="shadow-md hover:shadow-lg transition-all duration-300">
+    <Card>
       <CardContent className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <p className="text-sm font-medium text-muted-foreground mb-2">
-              {title}
-            </p>
-            <p className="text-3xl font-bold mb-1">{value}</p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 space-y-1">
+            <p className="text-sm font-medium text-muted-foreground">{title}</p>
+            <p className="text-2xl font-bold tracking-tight">{value}</p>
             {subtitle && (
-              <p className={`text-sm font-medium ${getTrendColor()}`}>
+              <p className={`text-sm font-medium ${getSubtitleStyles()}`}>
                 {subtitle}
               </p>
             )}
           </div>
           {Icon && (
-            <div className={`p-3 rounded-xl ${getIconBg()}`}>
-              <Icon className={`w-6 h-6 ${getIconColor()}`} />
+            <div className={`rounded-lg p-3 ${getIconStyles()}`}>
+              <Icon className="h-5 w-5" />
             </div>
           )}
         </div>
@@ -54,5 +61,3 @@ function StatsCard({ title, value, subtitle, Icon, trend }: StatsCardProps) {
     </Card>
   );
 }
-
-export default StatsCard;

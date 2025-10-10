@@ -1,8 +1,10 @@
 /**
- * Channel Type Selector
- * Allows user to select which type of channel to add
+ * Channel Type Selector - Professional shadcn implementation
+ * Grid of channel type buttons with proper visual states
  */
 
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import type { OutputType } from "../../types/reminder.types";
 import { getAllChannelTypes, getChannelConfig } from "../../config/channels";
 
@@ -20,8 +22,8 @@ export default function ChannelTypeSelector({
   const availableTypes = getAllChannelTypes();
 
   return (
-    <div>
-      <label className="block text-sm font-medium mb-3">Channel Type</label>
+    <div className="space-y-3">
+      <Label>Channel Type</Label>
       <div className="grid grid-cols-2 gap-2">
         {availableTypes.map((type) => {
           const config = getChannelConfig(type);
@@ -34,19 +36,17 @@ export default function ChannelTypeSelector({
               type="button"
               onClick={() => onSelect(type)}
               disabled={disabled}
-              className={`
-                flex items-center justify-center gap-2 p-4 rounded-lg border-2
-                transition-all duration-200
-                ${
-                  isSelected
-                    ? "border-primary bg-primary/10"
-                    : "border-base-300 hover:border-base-400"
-                }
-                ${disabled ? "opacity-50 cursor-not-allowed" : ""}
-              `}
+              className={cn(
+                "flex items-center justify-center gap-2 p-4 rounded-lg border-2",
+                "transition-all duration-200",
+                isSelected
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-input hover:border-muted-foreground/50 hover:bg-accent",
+                disabled && "opacity-50 cursor-not-allowed"
+              )}
             >
-              <Icon className="w-5 h-5" />
-              <span className="font-normal capitalize">{config.label}</span>
+              <Icon className="h-5 w-5" />
+              <span className="font-medium capitalize">{config.label}</span>
             </button>
           );
         })}

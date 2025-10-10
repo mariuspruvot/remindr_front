@@ -32,7 +32,7 @@ function RemindersPage() {
         subtitle={`${reminders?.length || 0} total reminders`}
         action={
           <Button onClick={() => openReminderModal()}>
-            <Plus className="w-5 h-5" />
+            <Plus className="h-4 w-4" />
             New Reminder
           </Button>
         }

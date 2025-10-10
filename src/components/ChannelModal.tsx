@@ -1,30 +1,26 @@
 /**
- * ChannelModal - Modal for creating and validating channels
- *
- * REFACTORED v2: Now uses Channel Registry System
- *
- * Changes:
- * - Uses ModalContext and generic Modal component
- * - Decomposed into smaller, focused components
- * - Uses Channel Registry for automatic configuration
- * - Business logic in useChannelForm hook
- *
- * Result: Much cleaner, easier to maintain, extensible
+ * ChannelModal - Professional modal using shadcn Dialog
+ * Two-step flow: creation → validation
  */
 
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Modal } from "./common/Modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useModals } from "../contexts/ModalContext";
 import { useChannelForm } from "../hooks/useChannelForm";
 import { ChannelCreationForm, ChannelValidationForm } from "./channels";
 
-function ChannelModal() {
+export default function ChannelModal() {
   const queryClient = useQueryClient();
   const { modals, closeChannelModal } = useModals();
   const { channelModal } = modals;
 
-  // Custom hook for form logic
   const form = useChannelForm({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["outputs"] });
@@ -33,7 +29,6 @@ function ChannelModal() {
     existingChannel: channelModal.channel,
   });
 
-  // Reset form when modal opens
   useEffect(() => {
     if (channelModal.isOpen) {
       form.resetForm();
@@ -42,44 +37,48 @@ function ChannelModal() {
   }, [channelModal.isOpen, channelModal.channel]);
 
   const modalTitle = form.step === "create" ? "Add Channel" : "Verify Channel";
+  const modalDescription =
+    form.step === "create"
+      ? "Choose a channel type and provide the necessary details."
+      : "Enter the verification code sent to your channel.";
 
   return (
-    <Modal
-      isOpen={channelModal.isOpen}
-      onClose={closeChannelModal}
-      title={modalTitle}
-      maxWidth="sm"
-    >
-      {/* Step 1: Create Channel */}
-      {form.step === "create" && (
-        <ChannelCreationForm
-          selectedType={form.selectedType}
-          identifier={form.identifier}
-          error={form.error}
-          isLoading={form.isLoading}
-          onTypeChange={form.setSelectedType}
-          onIdentifierChange={form.setIdentifier}
-          onSubmit={form.handleCreateChannel}
-          onCancel={closeChannelModal}
-        />
-      )}
+    <Dialog open={channelModal.isOpen} onOpenChange={closeChannelModal}>
+      <DialogContent className="sm:max-w-[450px]">
+        <DialogHeader>
+          <DialogTitle>{modalTitle}</DialogTitle>
+          <DialogDescription>{modalDescription}</DialogDescription>
+        </DialogHeader>
 
-      {/* Step 2: Validate Code */}
-      {form.step === "validate" && (
-        <ChannelValidationForm
-          identifier={form.identifier}
-          verificationCode={form.verificationCode}
-          error={form.error}
-          isLoading={form.isLoading}
-          attemptsRemaining={form.attemptsRemaining}
-          onCodeChange={form.setVerificationCode}
-          onSubmit={form.handleValidateCode}
-          onResend={form.handleResendCode}
-          onCancel={closeChannelModal}
-        />
-      )}
-    </Modal>
+        {/* Step 1: Create Channel */}
+        {form.step === "create" && (
+          <ChannelCreationForm
+            selectedType={form.selectedType}
+            identifier={form.identifier}
+            error={form.error}
+            isLoading={form.isLoading}
+            onTypeChange={form.setSelectedType}
+            onIdentifierChange={form.setIdentifier}
+            onSubmit={form.handleCreateChannel}
+            onCancel={closeChannelModal}
+          />
+        )}
+
+        {/* Step 2: Validate Code */}
+        {form.step === "validate" && (
+          <ChannelValidationForm
+            identifier={form.identifier}
+            verificationCode={form.verificationCode}
+            error={form.error}
+            isLoading={form.isLoading}
+            attemptsRemaining={form.attemptsRemaining}
+            onCodeChange={form.setVerificationCode}
+            onSubmit={form.handleValidateCode}
+            onResend={form.handleResendCode}
+            onCancel={closeChannelModal}
+          />
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
-
-export default ChannelModal;

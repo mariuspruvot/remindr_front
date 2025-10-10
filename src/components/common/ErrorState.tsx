@@ -1,12 +1,11 @@
 /**
- * ErrorState - Reusable error display
- * 
- * Why this exists?
- * - Consistent error UX across the app
- * - DRY principle for error handling UI
+ * ErrorState - Professional error display using shadcn Alert
+ * Consistent error UX across the app
  */
 
 import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 interface ErrorStateProps {
   message?: string;
@@ -18,15 +17,16 @@ export function ErrorState({
   retry,
 }: ErrorStateProps) {
   return (
-    <div className="alert alert-error">
-      <AlertCircle className="w-5 h-5" />
-      <span>{message}</span>
-      {retry && (
-        <button onClick={retry} className="btn btn-sm btn-ghost">
-          Retry
-        </button>
-      )}
-    </div>
+    <Alert variant="destructive">
+      <AlertCircle className="h-4 w-4" />
+      <AlertDescription className="flex items-center justify-between gap-4">
+        <span>{message}</span>
+        {retry && (
+          <Button onClick={retry} variant="outline" size="sm">
+            Retry
+          </Button>
+        )}
+      </AlertDescription>
+    </Alert>
   );
 }
-

@@ -16,7 +16,7 @@ interface ChannelsListProps {
   onResendVerification: (channel: Output) => void;
 }
 
-function ChannelsList({
+export default function ChannelsList({
   channels,
   onDelete,
   onResendVerification,
@@ -44,7 +44,7 @@ function ChannelsList({
             {/* Channel Info */}
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <div className="p-2 rounded-lg bg-muted">
-                <Icon className="w-5 h-5" />
+                <Icon className="h-5 w-5" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
@@ -78,7 +78,7 @@ function ChannelsList({
                   aria-label="Resend verification"
                   title="Resend verification code"
                 >
-                  <RefreshCw className="w-4 h-4" />
+                  <RefreshCw className="h-4 w-4" />
                 </Button>
               )}
               <Button
@@ -96,7 +96,7 @@ function ChannelsList({
                 className="h-8 w-8 text-destructive hover:text-destructive"
                 aria-label="Delete channel"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -105,5 +105,3 @@ function ChannelsList({
     </Card>
   );
 }
-
-export default ChannelsList;

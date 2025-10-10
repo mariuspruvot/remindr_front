@@ -9,8 +9,8 @@
 
 import { Bell, Clock, Send, Radio, ArrowRight, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
-import { PageHeader, LoadingState } from "../components/common";
 import { Button } from "@/components/ui/button";
+import { PageHeader, LoadingState } from "../components/common";
 import StatsCard from "../components/StatsCard";
 import ReminderTable from "../components/ReminderTable";
 import ChannelsList from "../components/ChannelsList";
@@ -95,20 +95,16 @@ function Dashboard() {
         <div className="flex items-center justify-between mb-5">
           <Button
             onClick={handleNewReminder}
-            className="hidden lg:flex gap-2"
+            className="hidden lg:flex"
             size="sm"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="h-4 w-4" />
             New Reminder
           </Button>
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-          >
-            <Link to="/reminders" className="gap-2">
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/reminders">
               View All
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </div>
@@ -127,23 +123,14 @@ function Dashboard() {
       {/* Channel Management Section */}
       <div>
         <div className="flex items-center justify-between mb-5">
-          <Button
-            onClick={handleAddChannel}
-            variant="secondary"
-            size="sm"
-            className="gap-2"
-          >
-            <Radio className="w-4 h-4" />
+          <Button onClick={handleAddChannel} variant="secondary" size="sm">
+            <Radio className="h-4 w-4" />
             Add Channel
           </Button>
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-          >
-            <Link to="/channels" className="gap-2">
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/channels">
               View All
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </div>
