@@ -1,5 +1,10 @@
 /**
  * React Query hooks for Output/Channel operations
+ *
+ * Provides automatic caching, refetching, and mutation handling
+ * for all output channel-related API operations.
+ *
+ * @module useOutputs
  */
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -7,7 +12,10 @@ import { api } from "../lib/api";
 import { showToast } from "../utils/toast";
 import type { Output, OutputCreateRequest } from "../types/reminder.types";
 
-// Fetch all outputs/channels
+/**
+ * Fetches all output channels with automatic caching
+ * @returns Query result with outputs array
+ */
 export const useOutputs = () => {
   return useQuery({
     queryKey: ["outputs"],
@@ -20,7 +28,11 @@ export const useOutputs = () => {
   });
 };
 
-// Create new output
+/**
+ * Creates a new output channel
+ * Automatically invalidates outputs cache on success
+ * @returns Mutation function for creating output channels
+ */
 export const useCreateOutput = () => {
   const queryClient = useQueryClient();
 
@@ -43,7 +55,11 @@ export const useCreateOutput = () => {
   });
 };
 
-// Validate output with code
+/**
+ * Validates an output channel (e.g., verify code for email)
+ * Automatically invalidates outputs cache on success
+ * @returns Mutation function for validating output channels
+ */
 export const useValidateOutput = () => {
   const queryClient = useQueryClient();
 
@@ -70,7 +86,10 @@ export const useValidateOutput = () => {
   });
 };
 
-// Resend verification code
+/**
+ * Resends verification email for an output channel
+ * @returns Mutation function for resending verification
+ */
 export const useResendVerification = () => {
   return useMutation({
     mutationFn: async (id: string) => {
@@ -90,7 +109,11 @@ export const useResendVerification = () => {
   });
 };
 
-// Delete output
+/**
+ * Deletes an output channel
+ * Automatically invalidates outputs cache on success
+ * @returns Mutation function for deleting output channels
+ */
 export const useDeleteOutput = () => {
   const queryClient = useQueryClient();
 

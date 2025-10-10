@@ -1,6 +1,10 @@
 /**
  * React Query hooks for Reminder operations
+ *
  * Provides automatic caching, refetching, and mutation handling
+ * for all reminder-related API operations.
+ *
+ * @module useReminders
  */
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -8,7 +12,10 @@ import { api } from "../lib/api";
 import { showToast } from "../utils/toast";
 import type { Reminder, ReminderCreateRequest } from "../types/reminder.types";
 
-// Fetch all reminders (paginated)
+/**
+ * Fetches all reminders with automatic caching
+ * @returns Query result with reminders array
+ */
 export const useReminders = () => {
   return useQuery({
     queryKey: ["reminders"],
@@ -22,7 +29,11 @@ export const useReminders = () => {
   });
 };
 
-// Fetch single reminder by id
+/**
+ * Fetches a single reminder by ID
+ * @param id - Reminder ID
+ * @returns Query result with reminder data
+ */
 export const useReminder = (id: string) => {
   return useQuery({
     queryKey: ["reminders", id],
@@ -34,7 +45,11 @@ export const useReminder = (id: string) => {
   });
 };
 
-// Create new reminder
+/**
+ * Creates a new reminder
+ * Automatically invalidates reminder cache on success
+ * @returns Mutation function for creating reminders
+ */
 export const useCreateReminder = () => {
   const queryClient = useQueryClient();
 
@@ -55,7 +70,11 @@ export const useCreateReminder = () => {
   });
 };
 
-// Update reminder
+/**
+ * Updates an existing reminder
+ * Automatically invalidates reminder cache on success
+ * @returns Mutation function for updating reminders
+ */
 export const useUpdateReminder = () => {
   const queryClient = useQueryClient();
 
@@ -85,7 +104,11 @@ export const useUpdateReminder = () => {
   });
 };
 
-// Delete reminder
+/**
+ * Deletes a reminder
+ * Automatically invalidates reminder cache on success
+ * @returns Mutation function for deleting reminders
+ */
 export const useDeleteReminder = () => {
   const queryClient = useQueryClient();
 

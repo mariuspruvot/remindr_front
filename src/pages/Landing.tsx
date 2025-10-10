@@ -1,15 +1,22 @@
 /**
- * Landing page - Single view with subtle animations
- * Clean, minimal, elegant
+ * Landing Page
+ *
+ * Public-facing landing page with award-winning animations.
+ * Features:
+ * - Smooth Framer Motion animations
+ * - Centered navigation menu
+ * - Gradient orb background effect
+ * - Interactive feature cards
+ *
+ * @component
  */
 
-import { motion } from "framer-motion";
-import { SignInButton, SignUpButton, useUser } from "@clerk/clerk-react";
-import { ArrowRight, Bell, Zap, Shield, Moon, Sun } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { useTheme } from "../components/theme-provider";
 import { useEffect } from "react";
-import { LoadingSpinner } from "../components/common";
+import { motion } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
+import { SignInButton, SignUpButton, useUser } from "@clerk/clerk-react";
+import { Bell, Zap, Shield, Moon, Sun } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Menubar,
@@ -20,20 +27,9 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 
-// Subtle animation variants
-const fadeIn = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, ease: "easeOut" },
-};
-
-const stagger = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
+import { useTheme } from "../components/theme-provider";
+import { LoadingSpinner } from "../components/common";
+import { EASING, DURATION, DELAY } from "../constants/animations";
 
 function Landing() {
   const { isSignedIn, isLoaded } = useUser();
@@ -98,9 +94,19 @@ function Landing() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md"
+        className="fixed top-0 left-0 right-0 z-50"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-center relative">
+        {/* Dots pattern in header */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-30"
+          style={{
+            backgroundImage:
+              "radial-gradient(color-mix(in srgb, currentColor 15%, transparent) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+            color: "hsl(var(--foreground))",
+          }}
+        />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-center relative z-10">
           {/* Center Menu */}
           <Menubar className="border-0 bg-transparent shadow-none">
             <MenubarMenu>
@@ -195,125 +201,200 @@ function Landing() {
       {/* Main Content */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-20 sm:py-24 lg:py-32">
         <div className="max-w-7xl mx-auto w-full">
-          {/* Hero Section */}
-          <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-            {/* Badge */}
+          {/* Hero Section - Award-winning design */}
+          <div className="text-center mb-16 sm:mb-20 lg:mb-24 relative">
+            {/* Gradient orb effect */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center px-4 py-2 rounded-full bg-muted/50 border border-border/50 text-sm font-medium mb-6"
-            >
-              <span className="text-foreground/70">
-                Multi-Channel Intelligence
-              </span>
-            </motion.div>
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 0.15, scale: 1 }}
+              transition={{ duration: DURATION.verySlow, ease: EASING.smooth }}
+              className="absolute inset-0 -z-10 mx-auto h-[600px] w-[600px] rounded-full bg-primary blur-[120px]"
+            />
 
-            {/* Main heading */}
+            {/* Main heading with staggered animation */}
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold mb-6 leading-tight tracking-tight"
+              transition={{ duration: DURATION.medium, ease: EASING.smooth }}
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-none tracking-tight"
             >
-              Never{" "}
-              <span className="relative inline-block italic">
+              <motion.span
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: DELAY.short, duration: DURATION.medium, ease: EASING.smooth }}
+              >
+                Never{" "}
+              </motion.span>
+              <motion.span
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: DELAY.short + 0.1, duration: DURATION.medium, ease: EASING.smooth }}
+                className="relative italic text-primary"
+              >
                 forget
                 <motion.span
-                  className="absolute -bottom-1 left-0 right-0 h-[2px] bg-foreground/20"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={{ scaleX: 1, opacity: 1 }}
+                  transition={{ delay: DELAY.veryLong + 0.1, duration: DURATION.medium, ease: EASING.smooth }}
+                  className="absolute -bottom-2 left-0 right-0 h-1 bg-primary/30 blur-sm"
+                  style={{ originX: 0 }}
                 />
-              </span>{" "}
-              again
+              </motion.span>
+              <motion.span
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: DELAY.medium, duration: DURATION.medium, ease: EASING.smooth }}
+              >
+                {" "}
+                again
+              </motion.span>
             </motion.h1>
 
-            {/* Description */}
+            {/* Description with fade-in */}
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed"
+              transition={{
+                delay: 0.6,
+                duration: 1,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
             >
-              Smart, multi-channel reminders that ensure you never miss what
-              matters
+              Send reminders via email, WhatsApp, Telegram, or webhooks. Set
+              once, delivered everywhere.
             </motion.p>
 
-            {/* CTA */}
+            {/* CTA with hover effects */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
+              transition={{ delay: 0.8, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-3"
             >
               {isSignedIn ? (
-                <Button asChild size="lg" className="shadow-lg">
-                  <Link to="/dashboard">Go to Dashboard</Link>
-                </Button>
-              ) : (
-                <SignUpButton mode="modal">
-                  <Button size="lg" className="shadow-lg">
-                    Get Started
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    asChild
+                    size="lg"
+                    className="relative overflow-hidden group"
+                  >
+                    <Link to="/dashboard">
+                      <span className="relative z-10">Open Dashboard</span>
+                      <motion.span
+                        className="absolute inset-0 bg-primary/20"
+                        initial={{ x: "-100%" }}
+                        whileHover={{ x: 0 }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      />
+                    </Link>
                   </Button>
-                </SignUpButton>
+                </motion.div>
+              ) : (
+                <>
+                  <SignUpButton mode="modal">
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button
+                        size="lg"
+                        className="relative overflow-hidden group"
+                      >
+                        <span className="relative z-10">Start free</span>
+                        <motion.span
+                          className="absolute inset-0 bg-white/10"
+                          initial={{ x: "-100%" }}
+                          whileHover={{ x: 0 }}
+                          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        />
+                      </Button>
+                    </motion.div>
+                  </SignUpButton>
+                  <SignInButton mode="modal">
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="relative overflow-hidden"
+                      >
+                        <span className="relative z-10">Sign in</span>
+                      </Button>
+                    </motion.div>
+                  </SignInButton>
+                </>
               )}
             </motion.div>
           </div>
 
-          {/* Features Grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto"
-          >
+          {/* Features - Animated cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
               {
                 icon: Bell,
                 title: "Multi-channel",
-                description:
-                  "Deliver to email, WhatsApp, Telegram, or webhooks. Your choice.",
-                iconColor: "text-blue-500",
-                bgColor: "bg-blue-500/10",
+                description: "Email, SMS, WhatsApp, Telegram, webhooks",
+                delay: 0.9,
               },
               {
                 icon: Zap,
-                title: "Lightning fast",
-                description:
-                  "Set up in seconds. No configuration headaches. Just works.",
-                iconColor: "text-orange-500",
-                bgColor: "bg-orange-500/10",
+                title: "Ready in 30s",
+                description: "No setup, no config, no hassle",
+                delay: 1.0,
               },
               {
                 icon: Shield,
-                title: "Secure & private",
-                description:
-                  "End-to-end encrypted. Zero tracking. Your data stays yours.",
-                iconColor: "text-emerald-500",
-                bgColor: "bg-emerald-500/10",
+                title: "Private",
+                description: "End-to-end encrypted, zero tracking",
+                delay: 1.1,
               },
-            ].map((feature, index) => (
-              <div
+            ].map((feature) => (
+              <motion.div
                 key={feature.title}
-                className="p-6 rounded-xl border bg-card/50 backdrop-blur-sm hover:bg-card hover:border-border/80 shadow-sm hover:shadow-md transition-all duration-300"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: feature.delay,
+                  duration: 1.2,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                whileHover={{
+                  y: -8,
+                  transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+                }}
+                className="group relative text-center p-6 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm hover:bg-card/50 hover:border-primary/20 transition-all duration-500"
               >
-                <div
-                  className={`inline-flex p-2.5 rounded-lg ${feature.bgColor} mb-4`}
+                {/* Glow effect on hover */}
+                <motion.div className="absolute inset-0 rounded-2xl bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10 blur-xl" />
+
+                <motion.div
+                  className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-500"
+                  whileHover={{
+                    rotate: [0, -10, 10, -10, 0],
+                    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+                  }}
                 >
                   <feature.icon
-                    className={`w-5 h-5 ${feature.iconColor}`}
+                    className="h-6 w-6 text-primary"
                     strokeWidth={2}
                   />
-                </div>
-                <h3 className="text-base font-semibold mb-2">
+                </motion.div>
+
+                <h3 className="mb-2 font-semibold group-hover:text-primary transition-colors duration-500">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-sm text-muted-foreground">
                   {feature.description}
                 </p>
-              </div>
+              </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </main>
       {/* Footer */}

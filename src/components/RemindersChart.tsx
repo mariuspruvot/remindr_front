@@ -1,9 +1,17 @@
 /**
- * RemindersChart - Beautiful reminders visualization with period selector
- * Shows sent vs scheduled reminders over time using shadcn/ui charts
+ * RemindersChart Component
+ *
+ * Displays reminders activity over time with:
+ * - Multiple time periods (day, week, month, quarter)
+ * - Multiple chart types (area, bar, line)
+ * - Scheduled vs sent reminders comparison
+ * - Centered timeline (shows past and future)
+ *
+ * @component
  */
 
 import { useState } from "react";
+import moment from "moment";
 import {
   AreaChart,
   Area,
@@ -15,6 +23,8 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
+import { AreaChartIcon, BarChart3, LineChartIcon } from "lucide-react";
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +33,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AreaChartIcon, BarChart3, LineChartIcon } from "lucide-react";
 import {
   ChartContainer,
   ChartTooltip,
@@ -33,7 +42,6 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import type { Reminder } from "../types/reminder.types";
-import moment from "moment";
 
 interface RemindersChartProps {
   reminders: Reminder[];
@@ -42,6 +50,9 @@ interface RemindersChartProps {
 type Period = "day" | "week" | "month" | "quarter";
 type ChartType = "area" | "bar" | "line";
 
+/**
+ * Chart configuration for data series
+ */
 const chartConfig = {
   scheduled: {
     label: "Scheduled",
@@ -57,16 +68,19 @@ export default function RemindersChart({ reminders }: RemindersChartProps) {
   const [period, setPeriod] = useState<Period>("month");
   const [chartType, setChartType] = useState<ChartType>("area");
 
-  // Generate data based on selected period
+  /**
+   * Generates chart data based on selected period
+   * Centers current time and shows past/future data
+   */
   const chartData = () => {
     if (period === "day") {
-      // Last 7 days
+      // 3 days before + today + 3 days after (today centered)
       return Array.from({ length: 7 }, (_, i) => {
         const day = moment()
-          .subtract(6 - i, "days")
+          .subtract(3 - i, "days")
           .startOf("day");
         const dayEnd = moment()
-          .subtract(6 - i, "days")
+          .subtract(3 - i, "days")
           .endOf("day");
 
         const scheduled = reminders.filter((r) => {
@@ -79,20 +93,22 @@ export default function RemindersChart({ reminders }: RemindersChartProps) {
           return date.isBetween(day, dayEnd, null, "[]") && r.sent;
         }).length;
 
+        const isToday = day.isSame(moment(), "day");
+
         return {
-          period: day.format("ddd D"),
+          period: isToday ? "Today" : day.format("ddd D"),
           scheduled,
           sent,
         };
       });
     } else if (period === "week") {
-      // Last 8 weeks
+      // 4 weeks before + this week + 3 weeks after (this week centered)
       return Array.from({ length: 8 }, (_, i) => {
         const weekStart = moment()
-          .subtract(7 - i, "weeks")
+          .subtract(4 - i, "weeks")
           .startOf("week");
         const weekEnd = moment()
-          .subtract(7 - i, "weeks")
+          .subtract(4 - i, "weeks")
           .endOf("week");
 
         const scheduled = reminders.filter((r) => {
@@ -105,20 +121,22 @@ export default function RemindersChart({ reminders }: RemindersChartProps) {
           return date.isBetween(weekStart, weekEnd, null, "[]") && r.sent;
         }).length;
 
+        const isThisWeek = moment().isBetween(weekStart, weekEnd, null, "[]");
+
         return {
-          period: weekStart.format("MMM D"),
+          period: isThisWeek ? "This week" : weekStart.format("MMM D"),
           scheduled,
           sent,
         };
       });
     } else if (period === "month") {
-      // Last 6 months
+      // 3 months before + this month + 2 months after (this month centered)
       return Array.from({ length: 6 }, (_, i) => {
         const monthStart = moment()
-          .subtract(5 - i, "months")
+          .subtract(3 - i, "months")
           .startOf("month");
         const monthEnd = moment()
-          .subtract(5 - i, "months")
+          .subtract(3 - i, "months")
           .endOf("month");
 
         const scheduled = reminders.filter((r) => {
@@ -131,20 +149,27 @@ export default function RemindersChart({ reminders }: RemindersChartProps) {
           return date.isBetween(monthStart, monthEnd, null, "[]") && r.sent;
         }).length;
 
+        const isThisMonth = moment().isBetween(
+          monthStart,
+          monthEnd,
+          null,
+          "[]"
+        );
+
         return {
-          period: monthStart.format("MMM YYYY"),
+          period: isThisMonth ? "Now" : monthStart.format("MMM YY"),
           scheduled,
           sent,
         };
       });
     } else {
-      // Last 12 months (quarter)
+      // 6 months before + this month + 5 months after (this month centered)
       return Array.from({ length: 12 }, (_, i) => {
         const monthStart = moment()
-          .subtract(11 - i, "months")
+          .subtract(6 - i, "months")
           .startOf("month");
         const monthEnd = moment()
-          .subtract(11 - i, "months")
+          .subtract(6 - i, "months")
           .endOf("month");
 
         const scheduled = reminders.filter((r) => {
@@ -157,8 +182,15 @@ export default function RemindersChart({ reminders }: RemindersChartProps) {
           return date.isBetween(monthStart, monthEnd, null, "[]") && r.sent;
         }).length;
 
+        const isThisMonth = moment().isBetween(
+          monthStart,
+          monthEnd,
+          null,
+          "[]"
+        );
+
         return {
-          period: monthStart.format("MMM"),
+          period: isThisMonth ? "Now" : monthStart.format("MMM"),
           scheduled,
           sent,
         };

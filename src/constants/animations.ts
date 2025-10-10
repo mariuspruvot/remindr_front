@@ -1,81 +1,54 @@
 /**
- * Reusable Framer Motion animation variants
- * Provides consistent animations across the application
+ * Animation constants and configurations
+ * Used for consistent motion design across the app
  */
 
-import type { Variants } from "framer-motion";
+/**
+ * Custom easing curves for smooth animations
+ * Inspired by Apple's design system
+ */
+export const EASING = {
+  /** Smooth ease-out for natural motion */
+  smooth: [0.16, 1, 0.3, 1] as const,
+  /** Default ease for general animations */
+  default: [0.25, 0.4, 0.25, 1] as const,
+} as const;
 
-// Fade animations
-export const fadeIn: Variants = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 },
-};
+/**
+ * Animation durations in seconds
+ */
+export const DURATION = {
+  fast: 0.4,
+  medium: 1,
+  slow: 1.2,
+  verySlow: 2,
+} as const;
 
-export const fadeInUp: Variants = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-};
+/**
+ * Animation delays for staggered effects
+ */
+export const DELAY = {
+  none: 0,
+  short: 0.2,
+  medium: 0.4,
+  long: 0.6,
+  veryLong: 0.8,
+} as const;
 
-export const fadeInDown: Variants = {
-  initial: { opacity: 0, y: -30 },
-  animate: { opacity: 1, y: 0 },
-};
-
-// Scale animations
-export const scaleIn: Variants = {
-  initial: { opacity: 0, scale: 0.9 },
-  animate: { opacity: 1, scale: 1 },
-  exit: { opacity: 0, scale: 0.9 },
-};
-
-// Stagger children
-export const staggerContainer: Variants = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1,
-    },
+/**
+ * Common animation variants
+ */
+export const VARIANTS = {
+  fadeIn: {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
   },
-};
-
-export const staggerContainerFast: Variants = {
-  animate: {
-    transition: {
-      staggerChildren: 0.05,
-    },
+  fadeInUp: {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
   },
-};
-
-// Modal animations
-export const modalBackdrop: Variants = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-};
-
-export const modalContent: Variants = {
-  initial: { opacity: 0, scale: 0.95, y: 20 },
-  animate: { opacity: 1, scale: 1, y: 0 },
-  exit: { opacity: 0, scale: 0.95, y: 20 },
-};
-
-// Slide animations
-export const slideInFromRight: Variants = {
-  initial: { x: "100%" },
-  animate: { x: 0 },
-  exit: { x: "100%" },
-};
-
-export const slideInFromLeft: Variants = {
-  initial: { x: "-100%" },
-  animate: { x: 0 },
-  exit: { x: "-100%" },
-};
-
-// Transition presets
-export const transitions = {
-  smooth: { duration: 0.3, ease: "easeOut" },
-  fast: { duration: 0.2, ease: "easeOut" },
-  slow: { duration: 0.5, ease: [0.6, -0.05, 0.01, 0.99] },
-  spring: { type: "spring" as const, stiffness: 300, damping: 30 },
-};
+  scaleIn: {
+    initial: { opacity: 0, scale: 0.8 },
+    animate: { opacity: 1, scale: 1 },
+  },
+} as const;
