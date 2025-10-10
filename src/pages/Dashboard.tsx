@@ -1,149 +1,202 @@
 /**
- * Dashboard Page - Overview of reminders and channels
- *
- * REFACTORED:
- * - Uses useModals() instead of prop callbacks (no prop drilling)
- * - Uses PageHeader, LoadingState, ErrorState components (DRY)
- * - Cleaner, more readable code
+ * Dashboard - Beautiful and modern overview
+ * Professional layout with stats, charts, and quick access
  */
 
-import { Bell, Clock, Send, Radio, ArrowRight, Plus } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Plus, TrendingUp, Clock, CheckCircle2, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { PageHeader, LoadingState } from "../components/common";
-import StatsCard from "../components/StatsCard";
 import ReminderTable from "../components/ReminderTable";
 import ChannelsList from "../components/ChannelsList";
+import RemindersChart from "../components/RemindersChart";
 import { useReminders, useDeleteReminder } from "../hooks/useReminders";
-import { useOutputs, useDeleteOutput } from "../hooks/useOutputs";
+import {
+  useOutputs,
+  useDeleteOutput,
+  useResendVerification,
+} from "../hooks/useOutputs";
 import { useModals } from "../contexts/ModalContext";
+import type { Output } from "../types/reminder.types";
 
 function Dashboard() {
   const { openReminderModal, openChannelModal } = useModals();
-
-  // Fetch data using React Query hooks
-  const { data: reminders = [], isLoading: remindersLoading } = useReminders();
-  const { data: channels = [], isLoading: channelsLoading } = useOutputs();
+  const { data: reminders = [], isLoading } = useReminders();
+  const { data: channels = [] } = useOutputs();
   const deleteReminder = useDeleteReminder();
   const deleteOutput = useDeleteOutput();
+  const resendVerification = useResendVerification();
 
   const handleDeleteReminder = async (reminderId: string) => {
-    if (window.confirm("Are you sure you want to delete this reminder?")) {
+    if (window.confirm("Delete this reminder?")) {
       await deleteReminder.mutateAsync(reminderId);
     }
-  };
-
-  const handleNewReminder = () => {
-    openReminderModal();
-  };
-
-  const handleAddChannel = () => {
-    openChannelModal();
   };
 
   const handleDeleteChannel = async (channelId: string) => {
     await deleteOutput.mutateAsync(channelId);
   };
 
-  // Calculate stats
-  const totalReminders = reminders.length;
-  const pendingReminders = reminders.filter((r) => !r.sent).length;
-  const sentReminders = reminders.filter((r) => r.sent).length;
+  const handleResendVerification = async (channel: Output) => {
+    await resendVerification.mutateAsync({
+      output_type: channel.output_type,
+      identifier: channel.identifier,
+    });
+  };
+
+  const totalCount = reminders.length;
+  const pendingCount = reminders.filter((r) => !r.sent).length;
+  const sentCount = reminders.filter((r) => r.sent).length;
   const activeChannels = channels.filter((c) => c.confirmed).length;
 
+  // Recent reminders (last 5)
+  const recentReminders = reminders.slice(0, 5);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <LoadingState size="lg" />
+      </div>
+    );
+  }
+
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
-      <PageHeader
-        title="Dashboard"
-        subtitle="Manage your reminders and channels"
-      />
+    <div className="flex-1">
+      <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+        <PageHeader
+          title="Overview"
+          subtitle="Your reminders at a glance"
+          action={
+            <Button onClick={() => openReminderModal()} size="sm">
+              <Plus className="h-4 w-4" />
+              New reminder
+            </Button>
+          }
+        />
 
-      {/* Stats Cards - Responsive Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
-        <StatsCard
-          title="Total Reminders"
-          value={remindersLoading ? "..." : totalReminders}
-          subtitle="All time"
-          Icon={Bell}
-          trend="neutral"
-        />
-        <StatsCard
-          title="Pending"
-          value={remindersLoading ? "..." : pendingReminders}
-          subtitle={pendingReminders > 0 ? "Scheduled" : "All sent"}
-          Icon={Clock}
-          trend="neutral"
-        />
-        <StatsCard
-          title="Sent"
-          value={remindersLoading ? "..." : sentReminders}
-          subtitle={sentReminders > 0 ? "Delivered" : "No reminders yet"}
-          Icon={Send}
-          trend={sentReminders > 0 ? "up" : "neutral"}
-        />
-        <StatsCard
-          title="Active Channels"
-          value={channelsLoading ? "..." : activeChannels}
-          subtitle={activeChannels > 0 ? "Verified" : "Add channels"}
-          Icon={Radio}
-          trend="neutral"
-        />
-      </div>
+        {/* Stats Grid - 4 columns */}
+        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                <TrendingUp className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-2xl font-semibold tracking-tight">
+                  {totalCount}
+                </p>
+                <p className="text-xs text-muted-foreground">Total</p>
+              </div>
+            </div>
+          </Card>
 
-      {/* Recent Reminders Section */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-5">
-          <Button
-            onClick={handleNewReminder}
-            className="hidden lg:flex"
-            size="sm"
-          >
-            <Plus className="h-4 w-4" />
-            New Reminder
-          </Button>
-          <Button asChild variant="ghost" size="sm">
-            <Link to="/reminders">
-              View All
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-500/10">
+                <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-2xl font-semibold tracking-tight">
+                  {pendingCount}
+                </p>
+                <p className="text-xs text-muted-foreground">Pending</p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-500/10">
+                <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-2xl font-semibold tracking-tight">
+                  {sentCount}
+                </p>
+                <p className="text-xs text-muted-foreground">Sent</p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-500/10">
+                <Radio className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-2xl font-semibold tracking-tight">
+                  {activeChannels}
+                </p>
+                <p className="text-xs text-muted-foreground">Channels</p>
+              </div>
+            </div>
+          </Card>
         </div>
 
-        {remindersLoading ? (
-          <LoadingState />
-        ) : (
-          <ReminderTable
-            reminders={reminders.slice(0, 5)}
-            onEdit={openReminderModal}
-            onDelete={handleDeleteReminder}
-          />
-        )}
-      </div>
+        {/* Main Content Grid */}
+        <div className="space-y-6">
+          {/* Chart - Full width */}
+          <RemindersChart reminders={reminders} />
 
-      {/* Channel Management Section */}
-      <div>
-        <div className="flex items-center justify-between mb-5">
-          <Button onClick={handleAddChannel} variant="secondary" size="sm">
-            <Radio className="h-4 w-4" />
-            Add Channel
-          </Button>
-          <Button asChild variant="ghost" size="sm">
-            <Link to="/channels">
-              View All
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          {/* Two columns: Reminders + Channels */}
+          <div className="grid gap-6 lg:grid-cols-3">
+            {/* Recent reminders - 2 columns */}
+            <div className="lg:col-span-2">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-base font-semibold">Recent reminders</h2>
+                {totalCount > 5 && (
+                  <Button variant="ghost" size="sm" asChild>
+                    <a href="/reminders">View all →</a>
+                  </Button>
+                )}
+              </div>
+
+              {totalCount === 0 ? (
+                <Card className="p-12">
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                      <Plus className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                    <p className="mb-2 text-sm font-medium">No reminders yet</p>
+                    <p className="mb-4 text-sm text-muted-foreground">
+                      Create your first reminder to get started
+                    </p>
+                    <Button onClick={() => openReminderModal()} size="sm">
+                      <Plus className="h-4 w-4" />
+                      Create reminder
+                    </Button>
+                  </div>
+                </Card>
+              ) : (
+                <ReminderTable
+                  reminders={recentReminders}
+                  onEdit={(reminder) => openReminderModal(reminder)}
+                  onDelete={handleDeleteReminder}
+                />
+              )}
+            </div>
+
+            {/* Active channels - 1 column */}
+            <div>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-base font-semibold">Active channels</h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => openChannelModal()}
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add
+                </Button>
+              </div>
+              <ChannelsList
+                channels={channels}
+                onDelete={handleDeleteChannel}
+                onResendVerification={handleResendVerification}
+              />
+            </div>
+          </div>
         </div>
-
-        {channelsLoading ? (
-          <LoadingState />
-        ) : (
-          <ChannelsList
-            channels={channels.slice(0, 3)}
-            onDelete={handleDeleteChannel}
-            onResendVerification={(channel) => openChannelModal(channel)}
-          />
-        )}
       </div>
     </div>
   );

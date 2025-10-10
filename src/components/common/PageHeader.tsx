@@ -1,18 +1,6 @@
 /**
- * PageHeader - Reusable page header component
- *
- * Why this exists?
- * - Every page (Dashboard, Reminders, Channels) had identical header structure
- * - DRY principle: Extract repeated UI patterns
- *
- * Usage:
- * ```tsx
- * <PageHeader
- *   title="Reminders"
- *   subtitle="Manage your scheduled reminders"
- *   action={<button>New Reminder</button>}
- * />
- * ```
+ * PageHeader - Minimal and elegant page header
+ * Consistent across all pages
  */
 
 interface PageHeaderProps {
@@ -23,18 +11,16 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
   return (
-    <div className="flex items-center justify-between mb-6 sm:mb-8">
-      <div>
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-base-content mb-1 sm:mb-2">
+    <div className="mb-8 flex items-start justify-between gap-4">
+      <div className="min-w-0 flex-1">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground mb-1">
           {title}
         </h1>
         {subtitle && (
-          <p className="text-sm sm:text-base text-base-content/60">
-            {subtitle}
-          </p>
+          <p className="text-sm text-muted-foreground">{subtitle}</p>
         )}
       </div>
-      {action && <div>{action}</div>}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }

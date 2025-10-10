@@ -1,56 +1,45 @@
 /**
- * Reminders Page - Full list view
- *
- * REFACTORED:
- * - Uses useModals() instead of prop callbacks
- * - Uses PageHeader, LoadingState, ErrorState components
- * - Much cleaner code structure
+ * Reminders Page - All reminders with clean table
+ * Minimal and focused
  */
 
 import { Plus } from "lucide-react";
-import { PageHeader, LoadingState, ErrorState } from "../components/common";
 import { Button } from "@/components/ui/button";
+import { PageHeader, LoadingState } from "../components/common";
 import ReminderTable from "../components/ReminderTable";
 import { useReminders, useDeleteReminder } from "../hooks/useReminders";
 import { useModals } from "../contexts/ModalContext";
 
 function RemindersPage() {
   const { openReminderModal } = useModals();
-  const { data: reminders, isLoading, error } = useReminders();
+  const { data: reminders = [], isLoading } = useReminders();
   const deleteReminder = useDeleteReminder();
 
   const handleDelete = async (reminderId: string) => {
-    if (window.confirm("Are you sure you want to delete this reminder?")) {
+    if (window.confirm("Delete this reminder?")) {
       await deleteReminder.mutateAsync(reminderId);
     }
   };
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">
       <PageHeader
-        title="All Reminders"
-        subtitle={`${reminders?.length || 0} total reminders`}
+        title="All reminders"
+        subtitle={`${reminders.length} total`}
         action={
-          <Button onClick={() => openReminderModal()}>
+          <Button onClick={() => openReminderModal()} size="sm">
             <Plus className="h-4 w-4" />
-            New Reminder
+            New reminder
           </Button>
         }
       />
 
-      {/* Loading State */}
-      {isLoading && <LoadingState size="lg" />}
-
-      {/* Error State */}
-      {error && (
-        <ErrorState message="Failed to load reminders. Please try again." />
-      )}
-
-      {/* Reminders Table */}
-      {reminders && (
+      {isLoading ? (
+        <LoadingState size="lg" />
+      ) : (
         <ReminderTable
           reminders={reminders}
-          onEdit={openReminderModal}
+          onEdit={(reminder) => openReminderModal(reminder)}
           onDelete={handleDelete}
         />
       )}

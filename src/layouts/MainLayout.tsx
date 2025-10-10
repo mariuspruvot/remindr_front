@@ -1,63 +1,70 @@
 /**
- * MainLayout - Professional application layout
- * Consistent structure with shadcn styling
+ * MainLayout - Professional SaaS Layout
+ * Beautiful, modern, and elegant design
  */
 
-import { useState } from "react";
-import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import { AppSidebar } from "../components/app-sidebar";
+import { PageBreadcrumbs } from "../components/page-breadcrumbs";
 import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import ReminderFormModal from "../components/ReminderFormModal";
 import ChannelModal from "../components/ChannelModal";
-import { useModals } from "../contexts/ModalContext";
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-  const { openReminderModal } = useModals();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const closeSidebar = () => setIsSidebarOpen(false);
-
   return (
-    <motion.div
-      className="min-h-screen bg-background relative flex flex-col"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      {/* Layout Structure */}
-      <Navbar onMenuClick={toggleSidebar} />
-
-      <div className="flex flex-1 min-h-0">
-        <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
-
-        <div className="flex-1 flex flex-col">
-          <main className="flex-1 w-full lg:w-auto">{children}</main>
-          <Footer />
-        </div>
-      </div>
-
-      {/* Floating Action Button - Mobile only */}
-      <Button
-        onClick={() => openReminderModal()}
-        size="lg"
-        className="fixed bottom-6 right-6 z-40 lg:hidden h-14 w-14 rounded-full shadow-lg hover:shadow-xl"
-        aria-label="New reminder"
+    <SidebarProvider>
+      <motion.div
+        className="flex min-h-screen w-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
       >
-        <Plus className="h-6 w-6" />
-      </Button>
+        {/* Sidebar */}
+        <AppSidebar />
 
-      {/* Global Modals */}
-      <ReminderFormModal />
-      <ChannelModal />
-    </motion.div>
+        {/* Main Content Area */}
+        <SidebarInset className="flex flex-1 flex-col overflow-hidden">
+          {/* Header - properly aligned */}
+          <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="flex w-full items-center gap-2 px-4">
+              <SidebarTrigger />
+              <Separator orientation="vertical" className="h-4" />
+              
+              {/* Breadcrumbs */}
+              <div className="flex flex-1 items-center gap-2">
+                <PageBreadcrumbs />
+              </div>
+              
+              {/* Navbar (Theme + User) */}
+              <Navbar />
+            </div>
+          </header>
+
+          {/* Page Content */}
+          <main className="flex flex-1 flex-col overflow-auto custom-scrollbar">
+            {children}
+          </main>
+
+          {/* Footer */}
+          <Footer />
+        </SidebarInset>
+
+        {/* Global Modals */}
+        <ReminderFormModal />
+        <ChannelModal />
+      </motion.div>
+    </SidebarProvider>
   );
 }

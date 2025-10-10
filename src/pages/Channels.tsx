@@ -1,16 +1,11 @@
 /**
- * Channels Page - Full channel management
- *
- * REFACTORED:
- * - Uses useModals() instead of prop callbacks
- * - Uses PageHeader, LoadingState, ErrorState components
- * - Cleaner and more maintainable
+ * Channels Page - Clean and minimal
+ * Elegant list with subtle info banner
  */
 
-import { Plus } from "lucide-react";
+import { Plus, Info } from "lucide-react";
 import { PageHeader, LoadingState, ErrorState } from "../components/common";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import ChannelsList from "../components/ChannelsList";
 import { useOutputs, useDeleteOutput } from "../hooks/useOutputs";
 import { useModals } from "../contexts/ModalContext";
@@ -28,39 +23,25 @@ function ChannelsPage() {
   const pendingCount = channels?.filter((ch) => !ch.confirmed).length || 0;
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="mx-auto max-w-4xl p-6 lg:p-8">
       <PageHeader
         title="Channels"
-        subtitle={`${verifiedCount} verified, ${pendingCount} pending`}
+        subtitle={`${verifiedCount} verified • ${pendingCount} pending`}
         action={
-          <Button onClick={() => openChannelModal()} variant="secondary">
+          <Button onClick={() => openChannelModal()} size="sm">
             <Plus className="h-4 w-4" />
-            Add Channel
+            Add channel
           </Button>
         }
       />
 
-      {/* Info Banner */}
-      <Alert className="mb-6">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          className="h-4 w-4"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            stroke="currentColor"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <AlertDescription>
-          Channels must be verified before you can use them for reminders. Check
-          your email/phone for verification codes.
-        </AlertDescription>
-      </Alert>
+      {/* Info banner - subtle */}
+      <div className="mb-6 flex gap-3 rounded-lg border bg-muted/50 p-3 text-sm">
+        <Info className="h-4 w-4 shrink-0 text-muted-foreground mt-0.5" />
+        <p className="text-muted-foreground">
+          Channels must be verified before you can use them for reminders.
+        </p>
+      </div>
 
       {/* Loading State */}
       {isLoading && <LoadingState size="lg" />}
