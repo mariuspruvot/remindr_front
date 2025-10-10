@@ -48,7 +48,10 @@ export function AppSidebar() {
   const location = useLocation();
 
   return (
-    <Sidebar collapsible="icon" className="border-r">
+    <Sidebar
+      collapsible="icon"
+      className="border-r shadow-[0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)]"
+    >
       {/* Header aligned with main header */}
       <SidebarHeader className="flex h-14 items-center justify-center border-b px-4 group-data-[collapsible=icon]:justify-center">
         {/* Icon only when collapsed */}
@@ -63,7 +66,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4">
+      <SidebarContent className="px-2 py-4 group-data-[collapsible=icon]:px-0">
         {/* Navigation - Clean and minimal */}
         <SidebarGroup>
           <SidebarGroupContent>
@@ -76,11 +79,13 @@ export function AppSidebar() {
                       asChild
                       tooltip={item.title}
                       isActive={isActive}
-                      className="h-8 text-sm font-normal group-data-[collapsible=icon]:justify-center"
+                      className="h-9 text-sm font-normal transition-colors group-data-[collapsible=icon]:h-9 group-data-[collapsible=icon]:w-9 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:mx-auto"
                     >
-                      <Link to={item.url}>
-                        <item.icon className="h-4 w-4 flex-shrink-0" />
-                        <span>{item.title}</span>
+                      <Link to={item.url} className="flex items-center gap-2">
+                        <item.icon className="h-4 w-4 shrink-0" />
+                        <span className="group-data-[collapsible=icon]:hidden">
+                          {item.title}
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

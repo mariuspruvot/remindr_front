@@ -48,10 +48,9 @@ export const useCreateReminder = () => {
       queryClient.invalidateQueries({ queryKey: ["reminders"] });
       showToast("Reminder created successfully!", "success");
     },
-    onError: (error: any) => {
+    onError: () => {
       // Don't show toast here - let the form handle error display
       // The form will show the error in the UI
-      console.error("Failed to create reminder:", error);
     },
   });
 };
@@ -80,9 +79,8 @@ export const useUpdateReminder = () => {
       });
       showToast("Reminder updated successfully!", "success");
     },
-    onError: (error: any) => {
+    onError: () => {
       // Don't show toast here - let the form handle error display
-      console.error("Failed to update reminder:", error);
     },
   });
 };

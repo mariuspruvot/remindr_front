@@ -36,7 +36,7 @@ export default function ChannelsList({
         return (
           <div
             key={channel.id}
-            className="group flex items-center justify-between gap-3 rounded-lg border bg-card p-3 transition-colors hover:bg-accent/50"
+            className="group flex items-center justify-between gap-3 rounded-lg border bg-card p-3 shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-all hover:bg-accent/50 hover:shadow-[0_2px_4px_rgba(0,0,0,0.1)] dark:shadow-none dark:hover:shadow-none"
           >
             {/* Channel info - compact */}
             <div className="flex min-w-0 flex-1 items-center gap-3">

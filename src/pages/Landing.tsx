@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { SignInButton, SignUpButton, useUser } from "@clerk/clerk-react";
 import { ArrowRight, Bell, Zap, Shield, Moon, Sun } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useTheme } from "../hooks/useTheme";
+import { useTheme } from "../components/theme-provider";
 import { useEffect } from "react";
 import { LoadingSpinner } from "../components/common";
 
@@ -28,7 +28,9 @@ const stagger = {
 
 function Landing() {
   const { isSignedIn, isLoaded } = useUser();
-  const { isDark, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const isDark = theme === "dark";
+  const toggleTheme = () => setTheme(isDark ? "light" : "dark");
   const navigate = useNavigate();
 
   // Redirect to dashboard if user is already signed in

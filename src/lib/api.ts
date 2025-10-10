@@ -43,7 +43,6 @@ api.interceptors.request.use(
         }
       }
     } catch (error) {
-      console.error("Failed to get auth token:", error);
       // Continue with request even if token fetch fails
       // This allows unauthenticated endpoints to still work
     }
@@ -62,7 +61,6 @@ api.interceptors.response.use(
     // Handle common errors
     if (error.response?.status === 401) {
       // Unauthorized - redirect to login
-      console.error("Unauthorized - redirect to login");
     }
     return Promise.reject(error);
   }
