@@ -221,21 +221,33 @@ function Landing() {
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: DELAY.short, duration: DURATION.medium, ease: EASING.smooth }}
+                transition={{
+                  delay: DELAY.short,
+                  duration: DURATION.medium,
+                  ease: EASING.smooth,
+                }}
               >
                 Never{" "}
               </motion.span>
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: DELAY.short + 0.1, duration: DURATION.medium, ease: EASING.smooth }}
+                transition={{
+                  delay: DELAY.short + 0.1,
+                  duration: DURATION.medium,
+                  ease: EASING.smooth,
+                }}
                 className="relative italic text-primary"
               >
                 forget
                 <motion.span
                   initial={{ scaleX: 0, opacity: 0 }}
                   animate={{ scaleX: 1, opacity: 1 }}
-                  transition={{ delay: DELAY.veryLong + 0.1, duration: DURATION.medium, ease: EASING.smooth }}
+                  transition={{
+                    delay: DELAY.veryLong + 0.1,
+                    duration: DURATION.medium,
+                    ease: EASING.smooth,
+                  }}
                   className="absolute -bottom-2 left-0 right-0 h-1 bg-primary/30 blur-sm"
                   style={{ originX: 0 }}
                 />
@@ -243,7 +255,11 @@ function Landing() {
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: DELAY.medium, duration: DURATION.medium, ease: EASING.smooth }}
+                transition={{
+                  delay: DELAY.medium,
+                  duration: DURATION.medium,
+                  ease: EASING.smooth,
+                }}
               >
                 {" "}
                 again
@@ -309,7 +325,10 @@ function Landing() {
                           className="absolute inset-0 bg-white/10"
                           initial={{ x: "-100%" }}
                           whileHover={{ x: 0 }}
-                          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                          transition={{
+                            duration: 0.4,
+                            ease: [0.16, 1, 0.3, 1],
+                          }}
                         />
                       </Button>
                     </motion.div>
@@ -366,27 +385,21 @@ function Landing() {
                 }}
                 whileHover={{
                   y: -8,
-                  transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+                  transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
                 }}
-                className="group relative text-center p-6 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm hover:bg-card/50 hover:border-primary/20 transition-all duration-500"
+                className="group relative text-center p-6 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm hover:bg-card/50 hover:border-primary/20 transition-colors duration-300"
               >
                 {/* Glow effect on hover */}
-                <motion.div className="absolute inset-0 rounded-2xl bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10 blur-xl" />
+                <div className="absolute inset-0 rounded-2xl bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-xl" />
 
-                <motion.div
-                  className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-500"
-                  whileHover={{
-                    rotate: [0, -10, 10, -10, 0],
-                    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-                  }}
-                >
+                <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
                   <feature.icon
                     className="h-6 w-6 text-primary"
                     strokeWidth={2}
                   />
-                </motion.div>
+                </div>
 
-                <h3 className="mb-2 font-semibold group-hover:text-primary transition-colors duration-500">
+                <h3 className="mb-2 font-semibold group-hover:text-primary transition-colors duration-300">
                   {feature.title}
                 </h3>
                 <p className="text-sm text-muted-foreground">
